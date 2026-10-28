@@ -1,0 +1,3130 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Tucuvori: Pontos Cantados de Umbanda</title>
+  
+  <!-- Novas Fontes Profissionais: Space Grotesk (Títulos) & Plus Jakarta Sans (Texto/UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ==========================================
+       VARIÁVEIS E TEMAS
+       ========================================== */
+    :root {
+      /* Tema Claro (Papel Velho / Pergaminho + Vermelho + Preto) */
+      --bg-dark: #f7f4ed;         
+      --bg-card: #ffffff;         
+      --bg-sidebar: #eee7da;      
+      --gold-primary: #8f1d2c;    
+      --gold-hover: #a9283a;      
+      --red-dark: #651323;        
+      --red-hover: #861b30;
+      --text-white: #000;      
+      --text-muted: #5f5b56;      
+      --border-color: #e3ddd2;    
+      --card-shadow: 0 8px 24px rgba(45, 32, 25, 0.06);
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --font-title: 'Rockwell', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --base-font-size: 16px;
+      --lyric-font-size: 1.25rem;
+    }
+
+    /* Tema Escuro */
+    [data-theme="dark"] {
+      --bg-dark: #0d0e12;
+      --bg-card: #151821;
+      --bg-sidebar: #11131a;
+      --gold-primary: #d32f2f;
+      --gold-hover: #f44336;
+      --red-dark: #651323;
+      --red-hover: #861b30;
+      --text-white: #f1f3f5;
+      --text-muted: #9aa0a6;
+      --border-color: #262a36;
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    /* RESET & BASE */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      min-height: 100dvh;
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      font-size: var(--base-font-size);
+      overflow: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      color: inherit;
+      outline: none;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--gold-primary);
+    }
+
+    /* LAYOUT PRINCIPAL */
+    .app-container {
+      display: flex;
+      width: 100vw;
+      height: 100%;
+      min-height: 100dvh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: 99;
+      transition: var(--transition);
+    }
+
+    .sidebar-overlay.active {
+      display: block;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      z-index: 100;
+      flex-shrink: 0;
+      height: 100%;
+    }
+
+    .brand {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand i {
+      color: var(--gold-primary);
+      font-size: 1.8rem;
+    }
+
+    .brand h1 {
+      font-family: var(--font-title);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold-primary);
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+
+    .nav-menu {
+      list-style: none;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .nav-section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin: 12px 12px 4px 12px;
+      font-weight: 700;
+    }
+
+    .nav-item button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .nav-item button:hover,
+    .nav-item.active button {
+      background-color: rgba(168, 28, 28, 0.12);
+      color: var(--gold-primary);
+    }
+
+    .nav-item.active button {
+      border-left: 3px solid var(--gold-primary);
+    }
+
+    .cloud-status {
+      padding: 16px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--gold-primary);
+    }
+
+    /* Header & Main Area */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .header {
+      height: 70px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background-color: var(--bg-sidebar);
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .left-header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 1.4rem;
+      color: var(--text-white);
+      padding: 8px;
+    }
+
+    .btn-back-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-white);
+      font-weight: 600;
+      font-size: 0.88rem;
+      transition: var(--transition);
+    }
+
+    .btn-back-header:hover {
+      background-color: var(--gold-primary);
+      color: #ffffff;
+      border-color: var(--gold-primary);
+    }
+
+    .search-bar {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 10px 16px 10px 40px;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      color: var(--text-white);
+      transition: var(--transition);
+    }
+
+    .search-bar input:focus {
+      border-color: var(--gold-primary);
+    }
+
+    .search-bar i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 28px;
+      padding-bottom: 80px;
+      overflow-y: auto;
+      background-color: var(--bg-dark);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* BARRA FIXA MOBILE */
+    .mobile-bottom-bar {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background-color: var(--bg-sidebar);
+      border-top: 1px solid var(--border-color);
+      z-index: 90;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 8px;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+    }
+
+    .mobile-bottom-bar button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      flex: 1;
+      height: 100%;
+      padding: 4px 0;
+      font-weight: 600;
+    }
+
+    .mobile-bottom-bar button i {
+      font-size: 1.1rem;
+      color: var(--gold-primary);
+    }
+
+    /* COMPONENTES REUTILIZÁVEIS */
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background-color: var(--gold-primary);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background-color: var(--gold-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background-color: var(--red-dark);
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background-color: var(--red-hover);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-white);
+    }
+    .btn-secondary:hover {
+      background-color: var(--border-color);
+    }
+
+    .page-title {
+      font-family: var(--font-title);
+      font-size: 1.5rem;
+      color: var(--gold-primary);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    /* Cards */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      box-shadow: var(--card-shadow);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold-primary);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .card-title {
+      font-family: var(--font-title);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: 1.3;
+      color: var(--text-white);
+    }
+
+    .card-subtitle {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .tag {
+      background-color: rgba(168, 28, 28, 0.12);
+      color: var(--gold-primary);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .app-info-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      line-height: 1.6;
+      box-shadow: var(--card-shadow);
+    }
+
+    .app-info-card h3 {
+      font-family: var(--font-title);
+      color: var(--gold-primary);
+      margin-bottom: 8px;
+    }
+
+    /* FORMULÁRIOS DAS ABAS DEDICADAS */
+    .form-container {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 28px;
+      max-width: 700px;
+      margin: 0 auto 40px auto;
+      box-shadow: var(--card-shadow);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-white);
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      border-color: var(--gold-primary);
+    }
+
+    textarea.form-control {
+      min-height: 180px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+
+    /* ESTATÍSTICAS */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      color: var(--gold-primary);
+    }
+
+    .stat-val {
+      font-family: var(--font-title);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* ==========================================
+       VISUALIZADOR DE CANTIGA REDESENHADO (NOVO DESIGN)
+       ========================================== */
+    .cantiga-view {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 850px;
+      margin: 0 auto 40px auto;
+      transition: var(--transition);
+      box-shadow: var(--card-shadow);
+    }
+
+    .cantiga-view.focus-mode {
+      padding: 40px;
+      max-width: 900px;
+      border-color: var(--gold-primary);
+    }
+
+    .cantiga-controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: rgba(0, 0, 0, 0.04);
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .font-size-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-pill {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-white);
+      transition: var(--transition);
+    }
+
+    .btn-pill:hover {
+      border-color: var(--gold-primary);
+      color: var(--gold-primary);
+    }
+
+    .cantiga-header {
+      margin-bottom: 24px;
+    }
+
+    .cantiga-header .top-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .cantiga-title-text {
+      font-family: var(--font-title);
+      color: var(--text-white);
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .cantiga-meta-details {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .cantiga-meta-details span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cantiga-lyric {
+      font-size: var(--lyric-font-size);
+      line-height: 1.85;
+      letter-spacing: 0.2px;
+      white-space: pre-wrap;
+      margin: 24px 0;
+      padding: 32px 28px;
+      background-color: var(--bg-dark);
+      border-radius: 12px;
+      border-left: 4px solid var(--gold-primary);
+      font-weight: 500;
+      word-break: break-word;
+      color: var(--text-white);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .cantiga-notes-card {
+      background-color: rgba(0,0,0,0.03);
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .cantiga-actions-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border-color);
+      padding-top: 24px;
+    }
+
+    /* IMPRESSÃO / EXPORTAÇÃO PDF */
+    #print-section {
+      display: none;
+    }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      .app-container, .mobile-bottom-bar {
+        display: none !important;
+      }
+
+      #print-section {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+
+      @page { size: auto; margin: 16mm 14mm; }
+      .pdf-cantiga-item {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-bottom: 18px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 12px;
+      }
+      #print-section h1, #print-section h2 { page-break-after: avoid; break-after: avoid; }
+      #print-section .pdf-cantiga-lyrics { overflow-wrap: anywhere; }
+
+      .pdf-cantiga-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #000000;
+        margin-bottom: 6px;
+      }
+
+      .pdf-cantiga-lyrics {
+        white-space: pre-wrap;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        color: #111111;
+        font-family: inherit;
+      }
+    }
+
+    /* RESPONSIVIDADE E AJUSTES MOBILE */
+    @media (max-width: 820px) {
+      .sidebar {
+        position: fixed;
+        left: -270px;
+        top: 0;
+        height: 100dvh;
+        box-shadow: 4px 0 16px rgba(0, 0, 0, 0.4);
+      }
+      .sidebar.open {
+        left: 0;
+      }
+      .menu-toggle {
+        display: block;
+      }
+      .header {
+        padding: 0 16px;
+      }
+      .main-content {
+        padding: 16px;
+        padding-bottom: 90px;
+      }
+      .grid-cards {
+        grid-template-columns: 1fr;
+      }
+      .cantiga-view {
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+      .cantiga-title-text {
+        font-size: 1.7rem;
+      }
+      .cantiga-lyric {
+        padding: 20px 16px;
+      }
+      .form-container {
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+      .form-actions {
+        flex-direction: column-reverse;
+      }
+      .form-actions .btn {
+        width: 100%;
+      }
+      .mobile-bottom-bar {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 1.3rem;
+      }
+    }
+
+    /* ACABAMENTO PROFISSIONAL */
+    :root { --radius-lg: 18px; --radius-md: 12px; }
+    body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    button, input, select, textarea { font-size: 16px; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--gold-primary) 35%, transparent);
+      outline-offset: 2px;
+    }
+    .sidebar { box-shadow: 8px 0 28px rgba(40, 24, 18, .035); }
+    .brand { padding: 24px 20px; }
+    .brand i { width: 42px; height: 42px; display:grid; place-items:center; border-radius: 13px;
+      color: #fff; background: var(--gold-primary); font-size: 1.25rem; box-shadow: 0 6px 14px rgba(143,29,44,.18); }
+    .brand h1 { letter-spacing: -.6px; }
+    .nav-section-title { color: #81786d; font-size: .68rem; letter-spacing: 1.4px; }
+    .nav-item button { min-height: 44px; border: 1px solid transparent; }
+    .nav-item.active button { border-left: 3px solid var(--gold-primary); background: rgba(143,29,44,.09); }
+    .header { box-shadow: 0 2px 12px rgba(40,24,18,.025); }
+    .search-bar input { border-radius: 12px; min-height: 44px; }
+    .search-bar input:focus, .form-control:focus { box-shadow: 0 0 0 3px rgba(143,29,44,.10); }
+    .main-content { scroll-behavior: smooth; }
+    .page-title { margin-bottom: 24px; }
+    .page-title h2 { font-size: clamp(1.35rem, 2vw, 1.8rem); letter-spacing: -.6px; }
+    .card, .stat-card, .app-info-card, .form-container, .cantiga-view {
+      border-radius: var(--radius-lg); border-color: var(--border-color);
+    }
+    .card { padding: 22px; min-height: 180px; }
+    .card:hover { box-shadow: 0 14px 32px rgba(45,32,25,.10); }
+    .card-icon { border-radius: 13px; }
+    .card-title { letter-spacing: -.25px; }
+    .tag { background: rgba(143,29,44,.09); border: 1px solid rgba(143,29,44,.12); }
+    .btn { min-height: 42px; border-radius: 10px; }
+    .btn-primary { box-shadow: 0 5px 12px rgba(143,29,44,.13); }
+    .btn-primary:hover { box-shadow: 0 8px 18px rgba(143,29,44,.2); }
+    .form-container { padding: clamp(20px, 4vw, 32px); }
+    .form-control { min-height: 46px; border-radius: 10px; }
+    textarea.form-control { line-height: 1.65; }
+    .stat-card { background: linear-gradient(145deg, var(--bg-card), color-mix(in srgb, var(--bg-card) 92%, var(--gold-primary))); }
+    .stat-icon { width: 48px; height: 48px; display:grid; place-items:center; border-radius: 14px;
+      background: rgba(143,29,44,.08); font-size: 1.35rem; }
+    .cantiga-view { padding: clamp(20px, 4vw, 36px); }
+    .cantiga-title-text { letter-spacing: -.9px; }
+    .cantiga-lyric { border-radius: 14px; }
+    .cantiga-controls-bar { border-radius: 14px; }
+    .cloud-status { color: var(--text-muted); }
+    .status-dot { box-shadow: 0 0 0 4px rgba(143,29,44,.10); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+    @media (max-width: 820px) {
+      .header { min-height: 66px; height: auto; padding: 10px 14px; }
+      .left-header-controls { gap: 6px; }
+      .btn-back-header { padding: 9px 10px; }
+      .search-bar { max-width: none; }
+      .main-content { padding: 18px 14px calc(92px + env(safe-area-inset-bottom)); }
+      .mobile-bottom-bar { height: calc(62px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); }
+      .cantiga-controls-bar { align-items: flex-start; }
+      .cantiga-title-text { overflow-wrap: anywhere; }
+      .cantiga-lyric { overflow-wrap: anywhere; word-break: normal; }
+    }
+    @media (max-width: 480px) {
+      .btn-back-header span { display: none; }
+      .btn-back-header { width: 40px; justify-content: center; padding: 8px; }
+      .search-bar input { padding-right: 10px; font-size: 14px; }
+      .page-title { align-items: flex-start; }
+      .page-title > button, .page-title .btn { white-space: normal; }
+      .stats-container { grid-template-columns: 1fr; }
+      .cantiga-meta-details { gap: 8px; }
+      .cantiga-actions-bar .btn { flex: 1 1 130px; }
+    }
+    @media print {
+      @page { margin: 18mm 16mm; }
+      #print-section { font-family: Arial, sans-serif !important; }
+    }
+
+
+
+    /* ==========================================================
+       TUCUVORI — REDESIGN COMPLETO DA INTERFACE
+       Paleta: marfim, vinho profundo e dourado discreto
+       ========================================================== */
+    :root {
+      --bg-dark: #f6f4ef;
+      --bg-card: #fffefa;
+      --bg-sidebar: #fffefa;
+      --gold-primary: #7d2435;
+      --gold-hover: #9a3045;
+      --red-dark: #571827;
+      --red-hover: #762238;
+      --text-white: #26232a;
+      --text-muted: #77717a;
+      --border-color: #e8e1dc;
+      --card-shadow: 0 10px 35px rgba(49, 29, 32, .055);
+      --transition: all .22s ease;
+      --font-title: 'Space Grotesk', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+    [data-theme="dark"] {
+      --bg-dark: #111116; --bg-card: #1a191f; --bg-sidebar: #17161c;
+      --gold-primary: #d78a72; --gold-hover: #edaa91; --red-dark: #6c2638;
+      --red-hover: #85334a; --text-white: #f6f0ed; --text-muted: #aaa0a5;
+      --border-color: #302a31; --card-shadow: 0 12px 35px rgba(0,0,0,.2);
+    }
+    html, body { background: var(--bg-dark); color: var(--text-white); }
+    body { letter-spacing: -.01em; }
+    button, input, select, textarea { font-size: inherit; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--gold-primary) 30%, transparent); outline-offset: 2px;
+    }
+    .app-container { background: var(--bg-dark); }
+    .sidebar {
+      width: 276px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color);
+      padding: 20px 15px 14px; box-shadow: 8px 0 30px rgba(44,25,30,.025);
+    }
+    .brand { border: 0; padding: 10px 11px 25px; gap: 12px; align-items: center; }
+    .brand-mark { display:grid; place-items:center; width:46px; height:46px; flex:0 0 46px; border-radius:15px;
+      background: linear-gradient(145deg, #8c2c40, #591827); color:#fff; box-shadow:0 8px 18px rgba(100,27,46,.2); }
+    .brand-mark i { color: #fff; font-size: 1.35rem; }
+    .brand-copy { min-width:0; }
+    .brand h1 { color:var(--text-white); font-family:var(--font-title); font-size:1.08rem; letter-spacing:.12em; line-height:1.25; }
+    .brand-copy span { display:block; color:var(--text-muted); font-size:.67rem; font-weight:600; letter-spacing:.015em; margin-top:4px; }
+    .nav-menu { padding: 5px 4px 15px; gap:5px; }
+    .nav-section-title { font-size:.64rem; letter-spacing:.13em; margin:20px 12px 8px; color:#9a8d90; }
+    .nav-item button { min-height:43px; border-radius:11px; padding:11px 13px; gap:12px; font-size:.84rem; color:var(--text-muted); }
+    .nav-item button i { width:19px; text-align:center; font-size:.96rem; }
+    .nav-item button:hover { background:rgba(125,36,53,.06); color:var(--gold-primary); transform:translateX(2px); }
+    .nav-item.active button { background:linear-gradient(90deg, rgba(125,36,53,.12), rgba(125,36,53,.045)); color:var(--gold-primary); border:0; box-shadow:inset 3px 0 0 var(--gold-primary); }
+    .cloud-status { margin:0 5px; border:1px solid var(--border-color); border-radius:12px; padding:12px; font-size:.72rem; background:var(--bg-dark); }
+    .status-dot { box-shadow:0 0 0 4px rgba(57,145,105,.12); background:#399169; }
+    .main-wrapper { min-width:0; }
+    .header { height:78px; padding:0 clamp(18px,3vw,42px); background:color-mix(in srgb, var(--bg-card) 92%, transparent); backdrop-filter:blur(16px); border-bottom:1px solid var(--border-color); }
+    .left-header-controls { gap:10px; }
+    .btn-back-header { background:var(--bg-card); border:1px solid var(--border-color); border-radius:11px; padding:10px 13px; font-size:.82rem; }
+    .btn-back-header:hover { background:var(--gold-primary); color:#fff; }
+    .search-bar { max-width:610px; margin-left:auto; }
+    .search-bar input { height:45px; padding:0 18px 0 44px; border:1px solid var(--border-color); background:var(--bg-dark); border-radius:13px; font-size:.82rem; box-shadow:inset 0 1px 2px rgba(30,20,20,.02); }
+    .search-bar input:focus { border-color:var(--gold-primary); box-shadow:0 0 0 4px rgba(125,36,53,.08); }
+    .search-bar i { left:16px; }
+    .main-content { padding:clamp(22px,3.1vw,44px); background:var(--bg-dark); }
+    .main-content > * { max-width:1500px; }
+    .page-title { margin-bottom:25px; color:var(--text-white); font-size:1.7rem; letter-spacing:-.045em; }
+    .page-title h2 { font-family:var(--font-title); font-size:clamp(1.55rem,2vw,2rem); font-weight:700; color:var(--text-white); }
+    .page-title h2::after { content:""; display:block; width:35px; height:3px; background:var(--gold-primary); border-radius:5px; margin-top:10px; }
+    .app-info-card { position:relative; overflow:hidden; border:0; border-radius:20px; padding:clamp(23px,3vw,36px); margin-bottom:25px;
+      color:#fff; background:radial-gradient(circle at 85% 10%, rgba(236,180,146,.24), transparent 25%), linear-gradient(120deg,#55202f 0%,#7d2435 55%,#8e3946 100%); box-shadow:0 18px 40px rgba(87,24,39,.15); }
+    .app-info-card::after { content:""; position:absolute; width:210px; height:210px; right:-80px; bottom:-115px; border:1px solid rgba(255,255,255,.15); border-radius:50%; box-shadow:0 0 0 25px rgba(255,255,255,.025),0 0 0 50px rgba(255,255,255,.02); pointer-events:none; }
+    .app-info-card h3 { color:#f4d6bd; font-size:.76rem; text-transform:uppercase; letter-spacing:.14em; margin-bottom:12px; }
+    .app-info-card p { max-width:850px; color:rgba(255,255,255,.88); line-height:1.8; font-size:.93rem; position:relative; z-index:1; }
+    .app-info-card strong { color:#fff; }
+    .stats-container { grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:15px; margin-bottom:34px; }
+    .stat-card { border-radius:17px; border:1px solid var(--border-color); background:var(--bg-card); padding:21px 23px; gap:17px; box-shadow:var(--card-shadow); transition:var(--transition); }
+    .stat-card:hover { transform:translateY(-3px); border-color:color-mix(in srgb,var(--gold-primary) 35%,var(--border-color)); }
+    .stat-icon { display:grid; place-items:center; width:48px; height:48px; border-radius:15px; background:rgba(125,36,53,.085); padding:13px; font-size:1.3rem; }
+    .stat-val { font-family:var(--font-title); font-size:1.8rem; letter-spacing:-.05em; line-height:1.1; }
+    .stat-label { font-size:.75rem; margin-top:5px; line-height:1.4; }
+    .grid-cards { grid-template-columns:repeat(auto-fill,minmax(min(100%,285px),1fr)); gap:17px; }
+    .card { border:1px solid var(--border-color); border-radius:17px; background:var(--bg-card); padding:22px; box-shadow:var(--card-shadow); min-width:0; }
+    .card:hover { transform:translateY(-4px); border-color:color-mix(in srgb,var(--gold-primary) 45%,var(--border-color)); box-shadow:0 16px 34px rgba(49,29,32,.09); }
+    .card-header { margin-bottom:16px; }
+    .card-icon { border-radius:14px; width:47px; height:47px; background:rgba(125,36,53,.08); color:var(--gold-primary); }
+    .card-title { font-family:var(--font-title); font-size:1.05rem; letter-spacing:-.025em; overflow-wrap:anywhere; }
+    .card-subtitle { line-height:1.55; font-size:.78rem; }
+    .tag { border-radius:7px; padding:5px 9px; font-size:.68rem; letter-spacing:.01em; }
+    .btn { min-height:40px; padding:10px 15px; border-radius:11px; font-size:.81rem; transition:var(--transition); }
+    .btn-primary { background:var(--gold-primary); box-shadow:0 5px 12px rgba(125,36,53,.14); }
+    .btn-primary:hover { background:var(--gold-hover); transform:translateY(-1px); box-shadow:0 8px 16px rgba(125,36,53,.2); }
+    .btn-secondary { background:var(--bg-card); border:1px solid var(--border-color); }
+    .btn-secondary:hover { background:var(--bg-dark); border-color:var(--gold-primary); color:var(--gold-primary); }
+    .btn-danger { border-radius:11px; }
+    .form-container { max-width:820px; padding:clamp(20px,3vw,34px); border-radius:20px; border:1px solid var(--border-color); background:var(--bg-card); box-shadow:var(--card-shadow); }
+    .form-group { margin-bottom:23px; }
+    .form-group label { color:var(--text-white); font-size:.8rem; font-weight:700; }
+    .form-control { border:1px solid var(--border-color); background:var(--bg-dark); border-radius:11px; min-height:45px; padding:12px 14px; font-size:.86rem; }
+    .form-control:focus { border-color:var(--gold-primary); box-shadow:0 0 0 4px rgba(125,36,53,.075); }
+    textarea.form-control { min-height:210px; line-height:1.75; }
+    .form-actions { padding-top:20px; border-top:1px solid var(--border-color); }
+    .cantiga-view { max-width:940px; padding:clamp(20px,4vw,48px); border-radius:22px; background:var(--bg-card); border:1px solid var(--border-color); box-shadow:0 18px 55px rgba(49,29,32,.07); }
+    .cantiga-controls-bar { background:var(--bg-dark); border:1px solid var(--border-color); border-radius:13px; padding:10px 13px; margin-bottom:30px; }
+    .cantiga-title-text { font-family:var(--font-title); letter-spacing:-.04em; font-size:clamp(1.65rem,3vw,2.45rem); line-height:1.18; overflow-wrap:anywhere; }
+    .cantiga-lyric { line-height:1.95; font-weight:500; letter-spacing:.005em; overflow-wrap:anywhere; white-space:pre-wrap; }
+    .cantiga-notes-card { border-radius:13px; }
+    .cantiga-actions-bar { display:flex; flex-wrap:wrap; gap:9px; }
+    .cantiga-actions-bar .btn { white-space:normal; }
+    .cantiga-meta-details { display:flex; flex-wrap:wrap; gap:9px; }
+    .cantiga-meta-details > * { border-radius:9px; }
+    .mobile-bottom-bar { background:var(--bg-card); border-top:1px solid var(--border-color); box-shadow:0 -8px 25px rgba(40,25,28,.06); backdrop-filter:blur(14px); }
+    .mobile-bottom-bar button { font-size:.66rem; }
+    .mobile-bottom-bar button i { font-size:1.08rem; }
+    .loading-state { min-height:55vh; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:10px; color:var(--text-muted); text-align:center; }
+    .loading-state strong { color:var(--text-white); font-family:var(--font-title); font-size:1.1rem; }
+    .loading-state p { font-size:.82rem; }
+    .loading-orbit { width:38px; height:38px; border-radius:50%; border:3px solid var(--border-color); border-top-color:var(--gold-primary); animation:tucuvori-spin .8s linear infinite; margin-bottom:7px; }
+    @keyframes tucuvori-spin { to { transform:rotate(360deg); } }
+    .sidebar-overlay { background:rgba(25,15,18,.52); backdrop-filter:blur(4px); }
+    #print-section { color:#111; }
+    @media (min-width:1500px) { .main-content { padding-left:clamp(42px,4vw,70px); padding-right:clamp(42px,4vw,70px); } }
+    @media (max-width:900px) {
+      .sidebar { width:276px; }
+      .header { height:68px; padding:0 18px; }
+      .main-content { padding:24px 20px 95px; }
+    }
+    @media (max-width:600px) {
+      html,body { overflow:hidden; }
+      .sidebar { width:min(86vw,310px); padding:15px 12px; }
+      .brand { padding:8px 9px 20px; }
+      .header { height:auto; min-height:66px; padding:11px 13px; gap:9px; }
+      .left-header-controls { gap:4px; }
+      .menu-toggle { font-size:1.1rem; padding:9px; }
+      .btn-back-header { padding:9px 10px; }
+      .search-bar { min-width:0; }
+      .search-bar input { height:42px; padding-left:37px; font-size:.74rem; }
+      .search-bar i { left:13px; font-size:.8rem; }
+      .main-content { padding:23px 14px calc(95px + env(safe-area-inset-bottom)); }
+      .page-title { gap:12px; margin-bottom:20px; }
+      .page-title h2 { font-size:1.55rem; }
+      .app-info-card { border-radius:16px; padding:22px 20px; }
+      .app-info-card p { font-size:.82rem; line-height:1.75; }
+      .stats-container { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+      .stat-card { padding:15px 13px; gap:10px; align-items:flex-start; flex-direction:column; border-radius:14px; }
+      .stat-icon { width:39px; height:39px; padding:10px; font-size:1rem; border-radius:12px; }
+      .stat-val { font-size:1.55rem; }
+      .stat-label { font-size:.69rem; }
+      .grid-cards { grid-template-columns:minmax(0,1fr); gap:12px; }
+      .card { padding:18px; border-radius:15px; }
+      .form-container { padding:20px 16px; border-radius:16px; }
+      .form-actions { justify-content:stretch; }
+      .form-actions .btn { flex:1 1 100%; white-space:normal; }
+      .cantiga-view { padding:18px 15px; border-radius:16px; }
+      .cantiga-controls-bar { border-radius:12px; padding:10px; }
+      .cantiga-title-text { font-size:1.65rem; }
+      .cantiga-lyric { font-size:var(--lyric-font-size); line-height:1.85; }
+      .cantiga-actions-bar .btn { flex:1 1 calc(50% - 8px); padding:10px 8px; font-size:.73rem; }
+      .mobile-bottom-bar { height:calc(67px + env(safe-area-inset-bottom)); padding:0 4px env(safe-area-inset-bottom); }
+      .mobile-bottom-bar button { gap:5px; }
+    }
+    @media (max-width:360px) {
+      .btn-back-header { width:36px; justify-content:center; padding:8px; }
+      .btn-back-header span { display:none; }
+      .stats-container { grid-template-columns:1fr 1fr; }
+      .stat-card { padding:13px 10px; }
+      .stat-label { overflow-wrap:anywhere; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition:none !important; }
+    }
+    @media print {
+      body,html { overflow:visible !important; background:#fff !important; }
+      .app-container,.mobile-bottom-bar { display:none !important; }
+      #print-section { display:block !important; }
+    }
+
+
+    /* RESPONSIVIDADE REFORÇADA — DESKTOP, TABLET E CELULAR */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { width: 100%; min-width: 0; -webkit-text-size-adjust: 100%; }
+    body { width: 100%; min-width: 0; margin: 0; }
+    .app-container { width: 100%; max-width: 100%; min-width: 0; }
+    .main-wrapper, .main-content, .header, .page-content, .page-title,
+    .card, .form-container, .cantiga-view, .app-info-card { min-width: 0; max-width: 100%; }
+    .main-wrapper { flex: 1 1 0; width: 0; }
+    .main-content { width: 100%; overflow-x: clip; }
+    .header { min-width: 0; }
+    .left-header-controls { min-width: 0; flex: 0 0 auto; }
+    .search-bar { min-width: 0; width: min(100%, 610px); }
+    .search-bar input, .form-control, input, select, textarea { max-width: 100%; min-width: 0; }
+    .grid-cards, .stats-container { grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr)); }
+    .card, .stat-card, .form-container, .cantiga-view { overflow-wrap: anywhere; }
+    .card-header, .cantiga-header, .cantiga-controls-bar, .cantiga-actions-bar,
+    .form-actions, .page-title { min-width: 0; flex-wrap: wrap; }
+    .btn, .form-actions .btn, .cantiga-actions-bar .btn { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+    img, video, canvas, iframe, svg { max-width: 100%; }
+    table { max-width: 100%; }
+    pre, code { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .cantiga-lyric { max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .nav-item, .nav-item button { min-width: 0; max-width: 100%; }
+
+    @media (min-width: 821px) {
+      .app-container { height: 100dvh; min-height: 100dvh; }
+      .sidebar { height: 100dvh; position: sticky; top: 0; }
+      .main-wrapper { height: 100dvh; min-height: 0; }
+      .main-content { height: calc(100dvh - var(--header-height, 0px)); min-height: 0; }
+      .mobile-bottom-bar { display: none !important; }
+    }
+
+    @media (max-width: 820px) {
+      html, body { width: 100%; max-width: 100%; overflow: hidden; }
+      .app-container { height: 100dvh; min-height: 100dvh; overflow: hidden; }
+      .sidebar { position: fixed; inset: 0 auto 0 0; height: 100dvh; max-height: 100dvh; overflow-y: auto; overscroll-behavior: contain; }
+      .main-wrapper { width: 100%; max-width: 100%; min-width: 0; height: 100dvh; display: flex; flex-direction: column; }
+      .header { flex: 0 0 auto; width: 100%; max-width: 100%; }
+      .main-content { flex: 1 1 auto; width: 100%; min-height: 0; height: auto; overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain; }
+      .grid-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .stats-container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .form-container { width: 100%; }
+      .form-group { min-width: 0; }
+      .form-group input, .form-group select, .form-group textarea { width: 100%; }
+      .mobile-bottom-bar { padding-left: max(4px, env(safe-area-inset-left)); padding-right: max(4px, env(safe-area-inset-right)); }
+    }
+
+    @media (max-width: 600px) {
+      .header { display: flex; align-items: center; flex-wrap: nowrap; }
+      .left-header-controls { gap: 4px; }
+      .search-bar { flex: 1 1 auto; width: auto; max-width: none; }
+      .search-bar input { width: 100%; min-width: 0; }
+      .main-content { padding-left: clamp(12px, 3.5vw, 18px); padding-right: clamp(12px, 3.5vw, 18px); }
+      .grid-cards { grid-template-columns: minmax(0, 1fr); }
+      .stats-container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .stat-card { min-width: 0; }
+      .stat-val { overflow-wrap: anywhere; }
+      .app-info-card { width: 100%; }
+      .page-title { align-items: flex-start; }
+      .page-title h2 { min-width: 0; overflow-wrap: anywhere; }
+      .card { padding: clamp(14px, 4vw, 19px); }
+      .form-container { padding: clamp(14px, 4vw, 20px); }
+      .form-actions { display: flex; flex-direction: column; align-items: stretch; }
+      .form-actions .btn { width: 100%; }
+      .cantiga-view { padding: clamp(14px, 4vw, 20px); }
+      .cantiga-title-text { font-size: clamp(1.4rem, 6vw, 1.8rem); }
+      .cantiga-lyric { padding: 14px 4px; font-size: clamp(.95rem, 4vw, var(--lyric-font-size, 1.1rem)); }
+      .cantiga-actions-bar { display: flex; flex-wrap: wrap; gap: 8px; }
+      .cantiga-actions-bar .btn { flex: 1 1 calc(50% - 8px); min-width: 0; }
+      .mobile-bottom-bar { min-height: 64px; }
+      .mobile-bottom-bar button { min-width: 0; overflow-wrap: anywhere; font-size: clamp(.6rem, 2.5vw, .72rem); }
+    }
+
+    @media (max-width: 380px) {
+      .header { gap: 6px; padding-left: 8px; padding-right: 8px; }
+      .menu-toggle { padding: 8px 7px; }
+      .btn-back-header { width: 36px; min-width: 36px; padding: 8px 4px; }
+      .btn-back-header span { display: none; }
+      .search-bar input { font-size: 16px; }
+      .stats-container { gap: 8px; }
+      .stat-card { padding: 11px 9px; }
+      .stat-label { font-size: .66rem; }
+      .cantiga-actions-bar .btn { flex-basis: 100%; }
+      .mobile-bottom-bar button i { font-size: 1rem; }
+    }
+
+    @media (max-height: 500px) and (orientation: landscape) {
+      .mobile-bottom-bar { height: 54px; }
+      .mobile-bottom-bar button { flex-direction: row; gap: 6px; }
+      .main-content { padding-bottom: 72px; }
+      .sidebar { padding-top: 8px; padding-bottom: 8px; }
+    }
+
+
+    /* MENU HAMBÚRGUER MOBILE — correção definitiva do painel persistente */
+    @media (max-width: 820px) {
+      .app-container { overflow: hidden; }
+      .sidebar {
+        position: fixed !important;
+        inset: 0 auto 0 0 !important;
+        width: min(84vw, 320px) !important;
+        max-width: calc(100vw - 56px) !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        box-sizing: border-box !important;
+        z-index: 1001 !important;
+        transform: translateX(-110%) !important;
+        visibility: hidden !important;
+        transition: transform .28s ease, visibility .28s ease !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain;
+      }
+      .sidebar.open {
+        left: 0 !important;
+        transform: translateX(0) !important;
+        visibility: visible !important;
+      }
+      .sidebar-overlay {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 1000 !important;
+        display: block !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        transition: opacity .25s ease, visibility .25s ease !important;
+      }
+      .sidebar-overlay.active {
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+      }
+      .menu-toggle {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 42px;
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        color: var(--gold-primary) !important;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        position: relative;
+        z-index: 1002;
+      }
+      body.mobile-menu-open { overflow: hidden !important; }
+    }
+    @media (min-width: 821px) {
+      .sidebar { transform: none !important; visibility: visible !important; position: relative; }
+      .sidebar-overlay { display: none !important; }
+      .menu-toggle { display: none !important; }
+    }
+  
+    /* Gravações dos pontos cantados */
+    .audio-recordings-panel{margin:28px 0;padding:clamp(18px,3vw,28px);border:1px solid var(--border-color);border-radius:22px;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(248,245,239,.96));box-shadow:0 10px 28px rgba(35,25,20,.045);color:var(--text-primary)}
+    .audio-panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px}
+    .audio-eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--gold-primary);font-size:.72rem;font-weight:800;letter-spacing:.13em}
+    .audio-panel-heading h2{font-size:clamp(1.25rem,2.5vw,1.65rem);margin:8px 0 6px;color:var(--text-primary)}
+    .audio-panel-heading p{margin:0;color:var(--text-muted);line-height:1.6;max-width:620px}
+    .audio-count{white-space:nowrap;background:rgba(168,28,28,.08);color:var(--gold-primary);border:1px solid rgba(168,28,28,.12);border-radius:999px;padding:8px 12px;font-size:.82rem;font-weight:700}
+    .audio-recorder-controls{padding:18px;border-radius:16px;background:rgba(120,110,100,.055);border:1px solid var(--border-color)}
+    .audio-recorder-name-label{display:block;font-size:.85rem;font-weight:700;margin-bottom:8px}
+    .audio-recorder-name{display:block;width:100%;min-width:0;padding:12px 14px;border-radius:12px;border:1px solid var(--border-color);background:var(--card-bg,#fff);color:var(--text-primary);font:inherit;margin-bottom:14px;box-sizing:border-box}
+    .audio-recorder-buttons{display:flex;flex-wrap:wrap;gap:10px}
+    .audio-recorder-buttons .btn{min-height:44px}
+    .audio-recorder-buttons button:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.35)}
+    .audio-recording-status{display:flex;align-items:center;gap:9px;margin-top:14px;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.7);font-size:.88rem;color:var(--text-muted)}
+    .audio-status-dot{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:#8c9990}
+    .audio-recording-status.is-recording .audio-status-dot{background:#d62828;box-shadow:0 0 0 5px rgba(214,40,40,.12);animation:audioPulse 1.3s infinite}
+    .audio-recording-status.is-paused .audio-status-dot{background:#d99a24;animation:none}
+    .audio-recording-timer{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:800;color:var(--text-primary)}
+    .audio-recording-note{display:flex;gap:8px;margin:12px 0 0;font-size:.78rem;line-height:1.55;color:var(--text-muted)}
+    .saved-recordings-list{display:grid;gap:12px;margin-top:18px}
+    .saved-recording-item{display:flex;align-items:flex-start;gap:13px;padding:15px;border:1px solid var(--border-color);border-radius:16px;background:var(--card-bg,#fff);min-width:0}
+    .saved-recording-icon{display:grid;place-items:center;width:42px;height:42px;flex:0 0 42px;border-radius:13px;background:rgba(168,28,28,.09);color:var(--gold-primary)}
+    .saved-recording-content{flex:1;min-width:0;display:grid;gap:5px}
+    .saved-recording-content strong{overflow-wrap:anywhere}
+    .saved-recording-content>span{font-size:.8rem;color:var(--text-muted)}
+    .saved-recording-content audio{width:100%;max-width:100%;height:42px;margin-top:5px}
+    .audio-delete-button{border:0;background:transparent;color:var(--text-muted);padding:9px;border-radius:10px;cursor:pointer}
+    .audio-delete-button:hover{color:#b42318;background:rgba(180,35,24,.08)}
+    .no-recordings{display:flex;align-items:center;gap:12px;padding:18px;border:1px dashed var(--border-color);border-radius:14px;color:var(--text-muted);line-height:1.5}
+    .no-recordings i{font-size:1.2rem;color:var(--gold-primary)}
+    @keyframes audioPulse{50%{box-shadow:0 0 0 8px rgba(214,40,40,.04)}}
+    @media(max-width:600px){.audio-panel-heading{flex-direction:column}.audio-count{align-self:flex-start}.audio-recorder-buttons{display:grid;grid-template-columns:1fr}.audio-recorder-buttons .btn{width:100%;justify-content:center}.audio-recording-status{align-items:flex-start;flex-wrap:wrap}.audio-recording-timer{margin-left:auto}.saved-recording-item{gap:9px;padding:11px}.saved-recording-icon{width:36px;height:36px;flex-basis:36px}.audio-delete-button{padding:7px}}
+    @media(prefers-reduced-motion:reduce){.audio-recording-status.is-recording .audio-status-dot{animation:none}}
+</style>
+
+  <!-- Correção mobile: manter apenas um botão Voltar. O botão do cabeçalho fica oculto,
+       pois a barra inferior já oferece a mesma ação. -->
+  <style id="mobile-single-back-button-fix">
+    @media (max-width: 820px) {
+      .header .btn-back-header { display: none !important; }
+      .header .left-header-controls { gap: 0 !important; }
+    }
+  
+
+    /* VISUAL RENOVADO — LEITURA DO PONTO CANTADO */
+    .cantiga-view {
+      position: relative;
+      isolation: isolate;
+      width: min(100%, 900px);
+      margin: clamp(12px, 3vw, 28px) auto 36px;
+      padding: clamp(18px, 4.2vw, 38px);
+      overflow: hidden;
+      border: 1px solid rgba(112, 71, 67, .16);
+      border-radius: clamp(18px, 3vw, 28px);
+      background: linear-gradient(155deg, #fffefa 0%, #fffdf8 60%, #f8f1e9 100%);
+      box-shadow: 0 16px 44px rgba(63, 35, 35, .08), 0 2px 8px rgba(63, 35, 35, .035);
+    }
+    .cantiga-view::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #8f1d2c, #c66b66 55%, #d9b88d);
+    }
+    .cantiga-controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px;
+      margin: 0 0 clamp(24px, 4vw, 36px);
+      border: 1px solid #e9e2d9;
+      border-radius: 17px;
+      background: #f7f4ef;
+    }
+    .font-size-controls { display:flex; align-items:center; flex-wrap:wrap; gap:7px; min-width:0; }
+    .font-size-controls > span { padding: 0 5px; font-size:.82rem !important; letter-spacing:.02em; }
+    .btn-pill {
+      min-height: 42px;
+      min-width: 42px;
+      padding: 9px 14px;
+      border-radius: 13px;
+      background: #fffefa;
+      border: 1px solid #e6ddd4;
+      color: #3b3433;
+      font-size: .88rem;
+      font-weight: 650;
+      box-shadow: 0 1px 2px rgba(30,20,20,.025);
+    }
+    .btn-pill:hover, .btn-pill:focus-visible { border-color:#a52a32; color:#8f1d2c; }
+    .cantiga-controls-bar > div:last-child { flex: 0 0 auto; }
+    .cantiga-controls-bar > div:last-child .btn-pill { white-space:nowrap; }
+    .cantiga-header { margin-bottom: 24px; }
+    .cantiga-header .top-meta { margin-bottom: 16px; gap:12px; }
+    .cantiga-header .top-meta .tag {
+      display:inline-flex; align-items:center; max-width:calc(100% - 54px);
+      padding:8px 13px; border-radius:10px;
+      background:#f7eae7; border:1px solid #ead2cd;
+      color:#8f1d2c; font-size:.88rem; font-weight:650; line-height:1.35;
+      white-space:normal; overflow-wrap:anywhere;
+    }
+    .cantiga-header .top-meta button {
+      display:grid; place-items:center; flex:0 0 46px; width:46px; height:46px;
+      border-radius:14px; background:#fffefa; border:1px solid #ece3da;
+    }
+    .cantiga-title-text {
+      margin: 0 0 15px;
+      color:#262426;
+      font-size:clamp(1.7rem, 5.2vw, 2.6rem);
+      line-height:1.12; letter-spacing:-.045em; font-weight:780;
+      overflow-wrap:anywhere;
+    }
+    .cantiga-meta-details { gap:8px 16px; font-size:.9rem; line-height:1.5; }
+    .cantiga-meta-details span { gap:8px; }
+    .cantiga-lyric {
+      position:relative;
+      margin: 28px 0 30px;
+      padding: clamp(18px, 4vw, 30px);
+      border:1px solid #eee7df;
+      border-left:4px solid #9f2029;
+      border-radius:18px;
+      background:linear-gradient(135deg, #f8f6f2 0%, #f5f2ed 100%);
+      color:#2c2929;
+      font-size:var(--lyric-font-size, 1.25rem);
+      font-weight:450;
+      line-height:1.9;
+      letter-spacing:0;
+      white-space:pre-wrap;
+      overflow-wrap:anywhere;
+      word-break:normal;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+    }
+    .cantiga-notes-card { padding:15px 17px; border-radius:14px; line-height:1.65; background:#fbf5e9; border:1px solid #eee0c5; }
+    .cantiga-actions-bar {
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+      padding-top:24px;
+      border-top:1px solid #e9e1d9;
+    }
+    .cantiga-actions-bar .btn {
+      display:flex; justify-content:center; align-items:center; gap:9px;
+      min-height:54px; padding:13px 15px; border-radius:15px;
+      font-size:.94rem; font-weight:650; line-height:1.3;
+      white-space:normal; overflow-wrap:anywhere;
+      transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .cantiga-actions-bar .btn:active { transform:scale(.985); }
+    .cantiga-actions-bar .btn-primary { box-shadow:0 6px 14px rgba(143,29,44,.16); }
+    .cantiga-actions-bar .btn-secondary { background:#fffefa; border:1px solid #e8dfd6; color:#332e2e; }
+    .cantiga-actions-bar .btn-secondary:hover { background:#f8efeb; border-color:#d9b8b2; }
+    .cantiga-view.focus-mode { width:min(100%, 1000px); }
+    @media (max-width:600px) {
+      .cantiga-view { margin:10px 0 24px; padding:18px 15px 17px; border-radius:20px; }
+      .cantiga-controls-bar { align-items:stretch; flex-direction:column; gap:9px; padding:10px; margin-bottom:25px; }
+      .font-size-controls { display:grid; grid-template-columns:auto repeat(3, minmax(0,1fr)); gap:6px; }
+      .font-size-controls > span { padding-left:3px; }
+      .btn-pill { min-width:0; min-height:42px; padding:8px 10px; }
+      .cantiga-controls-bar > div:last-child { width:100%; }
+      .cantiga-controls-bar > div:last-child .btn-pill { width:100%; }
+      .cantiga-header { margin-bottom:18px; }
+      .cantiga-title-text { font-size:clamp(1.55rem, 7vw, 2rem); line-height:1.16; }
+      .cantiga-meta-details { display:grid; gap:7px; font-size:.84rem; }
+      .cantiga-lyric { margin:22px 0; padding:17px 15px; border-radius:15px; line-height:1.8; }
+      .cantiga-actions-bar { gap:8px; padding-top:18px; }
+      .cantiga-actions-bar .btn { min-height:51px; padding:11px 8px; gap:7px; font-size:.83rem; border-radius:13px; }
+    }
+    @media (max-width:360px) {
+      .cantiga-view { padding:15px 12px; }
+      .font-size-controls { grid-template-columns:1fr 1fr 1fr; }
+      .font-size-controls > span { grid-column:1 / -1; }
+      .cantiga-actions-bar { grid-template-columns:1fr; }
+      .cantiga-actions-bar .btn { min-height:48px; }
+      .cantiga-title-text { font-size:1.5rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cantiga-actions-bar .btn { transition:none; }
+    }
+
+</style>
+
+
+  <style id="desktop-polish-v2">
+    /* Refinamento de desktop e telas largas */
+    @media (min-width: 1100px) {
+      .app-container { min-height: 100vh; }
+      .sidebar { width: 286px; flex: 0 0 286px; }
+      .main-wrapper { min-width: 0; flex: 1 1 auto; }
+      .header { position: sticky; top: 0; z-index: 30; }
+      .main-content { width: 100%; padding: 34px clamp(30px, 3.2vw, 58px) 48px; }
+      .main-content > * { width: 100%; max-width: 1480px; margin-left: auto; margin-right: auto; }
+      .page-title { margin-bottom: 30px; }
+      .app-info-card { padding: 34px 40px; }
+      .app-info-card p { max-width: 900px; font-size: .98rem; }
+      .stats-container { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+      .grid-cards { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 20px; }
+      .cantiga-view { width: min(100%, 1080px); max-width: 1080px; margin: 10px auto 36px; padding: 38px 44px; }
+      .cantiga-controls-bar { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 18px; margin-bottom: 34px; }
+      .cantiga-header { margin-bottom: 26px; }
+      .cantiga-title-text { font-size: clamp(2.1rem, 2.4vw, 2.8rem); }
+      .cantiga-lyric { font-size: clamp(1.15rem, 1.25vw, 1.35rem); line-height: 2.05; padding: 28px 32px; }
+      .cantiga-actions-bar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+      .cantiga-actions-bar .btn { min-height: 50px; justify-content: center; }
+      .mobile-bottom-bar { display: none !important; }
+    }
+    @media (min-width: 1500px) {
+      .sidebar { width: 300px; flex-basis: 300px; padding: 24px 18px 18px; }
+      .main-content { padding-top: 42px; }
+      .cantiga-view { width: min(100%, 1160px); max-width: 1160px; padding: 48px 56px; }
+      .cantiga-lyric { font-size: 1.35rem; }
+    }
+    @media (min-width: 821px) and (max-width: 1099px) {
+      .cantiga-view { max-width: 100%; margin: 0 auto 28px; padding: 30px; }
+      .cantiga-actions-bar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mobile-bottom-bar { display: none !important; }
+    }
+    @media (min-width: 821px) {
+      .btn-back-header { display: none !important; }
+      .menu-toggle { display: none !important; }
+      .sidebar { transform: none !important; visibility: visible !important; }
+      .sidebar-overlay { display: none !important; }
+      .cantiga-view, .card, .form-container { break-inside: avoid; }
+      .cantiga-lyric { white-space: pre-wrap; overflow-wrap: anywhere; }
+    }
+  </style>
+
+
+  <style>
+    /* Seletor de cores acessível e amigável para celular/desktop */
+    .color-chooser { width:100%; padding:16px; border:1px solid var(--border-color); border-radius:18px; background:var(--bg-dark); }
+    .color-palette { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:10px; }
+    .color-swatch { position:relative; display:flex; align-items:center; justify-content:center; width:100%; aspect-ratio:1; min-width:0; padding:4px; border:2px solid transparent; border-radius:13px; background:transparent; cursor:pointer; transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease; }
+    .color-swatch::before { content:""; width:100%; height:100%; border-radius:9px; background:var(--swatch-color); border:1px solid rgba(0,0,0,.12); box-shadow:inset 0 0 0 1px rgba(255,255,255,.12); }
+    .color-swatch[style*="--swatch-color:#ffffff"]::before { border:1px solid #c8c8c8; }
+    .color-swatch:hover { transform:translateY(-2px); }
+    .color-swatch.is-selected { border-color:var(--gold-primary); box-shadow:0 0 0 3px color-mix(in srgb, var(--gold-primary) 18%, transparent); }
+    .color-swatch.is-selected::after { content:"✓"; position:absolute; inset:0; display:grid; place-items:center; color:white; font-size:1.2rem; font-weight:800; text-shadow:0 1px 4px rgba(0,0,0,.75); }
+    .color-custom-row { display:flex; align-items:center; gap:12px; margin-top:16px; padding-top:14px; border-top:1px solid var(--border-color); }
+    .color-current-preview { width:42px; height:42px; flex:0 0 42px; border-radius:12px; background:var(--current-color); border:1px solid rgba(0,0,0,.14); box-shadow:0 2px 8px rgba(0,0,0,.08); }
+    .color-current-copy { display:flex; flex:1; min-width:0; flex-direction:column; gap:3px; }
+    .color-current-copy strong { font-size:.88rem; }
+    .color-hex { color:var(--text-muted); font-size:.8rem; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.04em; }
+    .btn-color-custom { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:42px; padding:9px 13px; border:1px solid var(--border-color); border-radius:12px; background:var(--bg-card); color:var(--text-white); font:inherit; font-size:.82rem; font-weight:600; cursor:pointer; }
+    .btn-color-custom:hover { border-color:var(--gold-primary); }
+    .native-color-input { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+    .color-swatch:focus-visible,.btn-color-custom:focus-visible { outline:3px solid var(--gold-primary); outline-offset:3px; }
+    @media(max-width:600px) {
+      .color-chooser { padding:12px; }
+      .color-palette { grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+      .color-swatch { border-radius:11px; padding:3px; }
+      .color-swatch::before { border-radius:8px; }
+      .color-custom-row { flex-wrap:wrap; }
+      .color-current-copy { min-width:calc(100% - 66px); }
+      .btn-color-custom { width:100%; min-height:46px; }
+    }
+    @media(min-width:601px) and (max-width:900px) { .color-palette { grid-template-columns:repeat(7,minmax(0,1fr)); } }
+  
+    /* Destaque da área de gravação: sempre visível na tela do ponto */
+    .audio-recordings-panel{display:block!important;visibility:visible!important;position:relative;z-index:1;clear:both}
+    .audio-recordings-panel .audio-recorder-buttons{display:flex;flex-wrap:wrap;gap:10px}
+    .audio-recordings-panel .audio-recorder-buttons button{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+    .audio-recordings-panel .audio-recorder-buttons #startAudioRecording{min-height:48px;padding:12px 18px}
+    @media(max-width:600px){.audio-recordings-panel .audio-recorder-buttons{display:grid;grid-template-columns:1fr}.audio-recordings-panel .audio-recorder-buttons button{width:100%}}
+
+/* ==========================================================
+   TUCUVORI — REDESIGN VISUAL COMPLETO | desktop + mobile
+   Mantém IDs, componentes e lógica existentes.
+   ========================================================== */
+:root{
+  --bg-dark:#f5f3ef;--bg-card:#fffefa;--bg-sidebar:#fbf8f2;
+  --gold-primary:#9f2633;--gold-hover:#b83340;--red-dark:#641d2a;--red-hover:#7d2433;
+  --text-white:#29272a;--text-muted:#777278;--border-color:#e8e1dc;
+  --card-shadow:0 12px 34px rgba(62,35,38,.065);
+  --transition:all .22s ease;--font-title:'Space Grotesk',sans-serif;
+  --font-body:'Plus Jakarta Sans',sans-serif;
+}
+body{background:radial-gradient(ellipse at 90% 0%,rgba(159,38,51,.045),transparent 35%),var(--bg-dark);letter-spacing:-.01em}
+button,input,select,textarea{font-size:inherit}
+button{transition:transform .18s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid rgba(159,38,51,.28);outline-offset:2px}
+.app-container{width:100%;height:100dvh;min-height:0}
+.sidebar{background:linear-gradient(180deg,#fffdf9 0%,#f8f2ec 100%);border-right:1px solid #e9e0da;box-shadow:8px 0 32px rgba(55,30,32,.035);padding:24px 16px 18px;gap:18px}
+.brand{padding:10px 10px 24px;gap:13px;border-bottom:1px solid rgba(115,75,75,.12)}
+.brand-mark{width:54px;height:54px;min-width:54px;border-radius:18px;background:linear-gradient(145deg,#b63340,#7d1e2d);box-shadow:0 9px 22px rgba(125,30,45,.22);color:white;display:grid;place-items:center}
+.brand-mark i{font-size:1.45rem}.brand-copy h1{font-family:var(--font-title);letter-spacing:.16em;font-size:1.08rem;font-weight:700}.brand-copy span{font-size:.77rem;line-height:1.45;color:var(--text-muted)}
+.nav-menu{gap:5px}.nav-section-title{padding:18px 13px 8px;font-size:.67rem;letter-spacing:.15em;font-weight:800;color:#9a8b89;text-transform:uppercase}
+.nav-item{margin:0 2px;border-radius:13px;overflow:hidden;transition:var(--transition)}
+.nav-item button{width:100%;display:flex;align-items:center;gap:13px;padding:12px 14px;border-radius:13px;text-align:left;font-size:.88rem;font-weight:600;color:#706a6e}
+.nav-item button i{width:20px;text-align:center;font-size:1rem}
+.nav-item:hover button{background:#f2e8e4;color:var(--gold-primary);transform:translateX(2px)}
+.nav-item.active{background:linear-gradient(100deg,#f3e3e0,#fbf3ef);box-shadow:inset 3px 0 var(--gold-primary)}
+.nav-item.active button{color:var(--gold-primary);font-weight:750}
+.cloud-status{margin-top:auto;padding:12px 13px;border:1px solid #e8ded7;background:rgba(255,255,255,.68);border-radius:15px;font-size:.78rem;color:#797174}
+.status-dot{box-shadow:0 0 0 4px rgba(47,145,105,.12)}
+.main-wrapper{min-width:0;background:transparent}
+.header{min-height:82px;height:auto;padding:15px clamp(18px,3vw,42px);gap:18px;background:rgba(255,254,250,.88);border-bottom:1px solid rgba(224,214,207,.9);backdrop-filter:blur(16px);position:relative;z-index:5}
+.left-header-controls{gap:10px}.menu-toggle,.btn-back-header{height:46px;min-width:46px;border-radius:14px;border:1px solid var(--border-color);background:#fffefa;color:var(--gold-primary);box-shadow:0 2px 5px rgba(40,20,20,.025)}
+.menu-toggle:hover,.btn-back-header:hover{background:#f8ece9;border-color:#dfc4c2;box-shadow:0 5px 14px rgba(85,36,39,.08)}
+.search-bar{height:48px;max-width:760px;border-radius:16px;border:1px solid #e7dfd9;background:#f7f5f1;padding:0 17px;gap:12px;box-shadow:inset 0 1px 1px rgba(30,20,20,.02)}
+.search-bar:focus-within{background:#fffefa;border-color:#c98e91;box-shadow:0 0 0 4px rgba(159,38,51,.07)}.search-bar i{color:#9b8584}.search-bar input{font-size:.88rem;color:var(--text-white)}.search-bar input::placeholder{color:#a29a99}
+.main-content{padding:clamp(22px,3vw,44px);overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.page-title{margin-bottom:25px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.page-title h2{font-family:var(--font-title);font-size:clamp(1.65rem,2.4vw,2.15rem);letter-spacing:-.055em;font-weight:700;color:#302b2e;line-height:1.15}
+.page-title:after{content:"";display:block;position:absolute}
+.page-title h2:after{content:"";display:block;width:48px;height:4px;border-radius:9px;background:linear-gradient(90deg,var(--gold-primary),#d5a05e);margin-top:15px}
+.stats-container{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:26px 0 38px}
+.stat-card,.card,.cantiga-view,.form-card,.settings-card{border:1px solid rgba(224,214,207,.95);background:var(--bg-card);border-radius:22px;box-shadow:var(--card-shadow);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.stat-card{padding:24px;position:relative;overflow:hidden}.stat-card:before{content:"";position:absolute;right:-30px;top:-40px;width:130px;height:130px;border-radius:50%;background:rgba(159,38,51,.045)}
+.stat-card:hover,.card:hover{transform:translateY(-3px);box-shadow:0 17px 38px rgba(62,35,38,.09);border-color:#ddc7c3}
+.stat-val{font-family:var(--font-title);font-size:clamp(2rem,3vw,2.7rem);font-weight:700;letter-spacing:-.07em;color:#342b2f;line-height:1.1}.stat-label{margin-top:9px;color:var(--text-muted);font-size:.83rem;line-height:1.5}
+.card{padding:23px;cursor:pointer}.card-header{display:flex;align-items:center;justify-content:space-between;gap:12px}.card-icon{width:46px;height:46px;border-radius:15px;display:grid;place-items:center}.card-title{font-family:var(--font-title);font-weight:700;font-size:1.08rem;letter-spacing:-.03em;margin-top:15px}.card-subtitle{font-size:.82rem;color:var(--text-muted);line-height:1.6}
+.btn{min-height:44px;border-radius:13px;padding:11px 17px;font-weight:700;font-size:.84rem;display:inline-flex;align-items:center;justify-content:center;gap:9px;line-height:1.3}
+.btn-primary{background:linear-gradient(135deg,#aa2d3a,#841f2e);color:#fff;box-shadow:0 7px 15px rgba(132,31,46,.16)}.btn-primary:hover{background:linear-gradient(135deg,#b93643,#912536);transform:translateY(-1px);box-shadow:0 10px 20px rgba(132,31,46,.22)}
+.btn-secondary,.btn-pill{background:#fffefa;border:1px solid var(--border-color);color:#494348}.btn-secondary:hover,.btn-pill:hover{background:#f8efeb;border-color:#ddc4c1;color:var(--gold-primary)}
+input:not([type=checkbox]):not([type=radio]):not([type=color]),select,textarea{border:1px solid #e5dcd6;border-radius:13px;background:#fffefa;padding:12px 14px;min-height:45px;max-width:100%;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{border-color:#bd8588;box-shadow:0 0 0 4px rgba(159,38,51,.07)}label{font-size:.86rem;font-weight:700;color:#494247;margin-bottom:8px;display:inline-block}
+/* Cantiga / leitura */
+.cantiga-view{max-width:1120px;width:100%;margin:0 auto;padding:clamp(22px,3.2vw,42px);border-radius:26px;box-shadow:0 18px 55px rgba(59,33,36,.07)}
+.cantiga-controls-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:12px 14px;border:1px solid #e9e0da;background:#f8f5f0;border-radius:17px;margin-bottom:30px}
+.font-size-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.btn-pill{min-height:40px;padding:9px 14px;border-radius:999px;font-size:.83rem;font-weight:650}
+.cantiga-header{padding:0 0 25px;border-bottom:1px solid #eee7e2;margin-bottom:25px}.top-meta{display:flex;align-items:center;justify-content:space-between;gap:12px}.tag{display:inline-flex;align-items:center;min-height:32px;border-radius:10px;padding:6px 12px;background:#f6e9e6;color:#922936;border:1px solid #ead4d1;font-weight:700;font-size:.78rem}
+.cantiga-title-text{font-family:var(--font-title);font-size:clamp(1.8rem,3.6vw,2.7rem);line-height:1.14;letter-spacing:-.055em;margin:20px 0 13px;color:#302a2d;overflow-wrap:anywhere}
+.cantiga-meta-details{display:flex;gap:10px 20px;flex-wrap:wrap;color:var(--text-muted);font-size:.83rem}.cantiga-meta-details i{color:#a58d8a;margin-right:5px}
+.cantiga-lyric{font-size:var(--lyric-font-size,1.25rem);line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;padding:clamp(20px,3vw,34px);margin:24px 0;background:linear-gradient(135deg,#faf7f2,#f5f1eb);border:1px solid #eee5de;border-left:5px solid var(--gold-primary);border-radius:8px 20px 20px 8px;color:#302b2e}
+.cantiga-notes-card{padding:17px 19px;border:1px solid #eadbd5;background:#fff9f3;border-radius:15px;line-height:1.7;color:#655b5d;margin:22px 0}
+.cantiga-actions-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;border-top:1px solid #eee6e0;padding-top:24px;margin-top:28px}.cantiga-actions-bar .btn{width:100%;min-width:0}
+/* Recorder gets its own visual identity */
+.audio-recordings-panel{margin:28px 0;padding:clamp(18px,2.5vw,28px);border:1px solid #eadbd6;border-radius:22px;background:linear-gradient(145deg,#fffaf6 0%,#f8f0eb 100%);box-shadow:inset 0 1px rgba(255,255,255,.8)}
+.audio-panel-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;margin-bottom:22px}.audio-eyebrow{display:inline-flex;align-items:center;gap:8px;color:#9d2937;font-size:.7rem;font-weight:800;letter-spacing:.15em}.audio-panel-heading h2{font-family:var(--font-title);font-size:clamp(1.2rem,2vw,1.55rem);letter-spacing:-.04em;margin:9px 0;color:#332b2e}.audio-panel-heading p{max-width:660px;color:#786d70;font-size:.86rem;line-height:1.7}.audio-count{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:999px;background:#fff;border:1px solid #eadbd6;color:#8e2935;font-size:.78rem;font-weight:750;white-space:nowrap}
+.audio-recorder-controls{background:#fffefa;border:1px solid #ece2dc;border-radius:17px;padding:19px}.audio-recorder-name{display:block;width:100%;margin:0 0 14px}.audio-recorder-buttons{display:flex;gap:9px;flex-wrap:wrap}.audio-recorder-buttons .btn{flex:1 1 160px}.audio-recorder-buttons button:disabled{opacity:.42;cursor:not-allowed;box-shadow:none;transform:none}
+.audio-recording-status{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:15px;padding:11px 13px;background:#f6f3ee;border-radius:12px;color:#72696b;font-size:.78rem;line-height:1.5}.audio-status-dot{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:#4a9b78;box-shadow:0 0 0 4px rgba(74,155,120,.12)}.audio-recording-timer{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:800;color:#8f2634}.audio-recording-note{margin-top:12px;color:#8b8080;font-size:.73rem;line-height:1.6}.saved-recordings-list{display:grid;gap:10px;margin-top:14px}.saved-recording-item{display:flex;align-items:flex-start;gap:13px;padding:15px;background:#fffefa;border:1px solid #e9dfd9;border-radius:15px;min-width:0}.saved-recording-icon{width:40px;height:40px;flex:0 0 40px;display:grid;place-items:center;border-radius:13px;background:#f4e5e2;color:#9c2836}.saved-recording-content{flex:1;min-width:0;display:grid;gap:6px}.saved-recording-content strong{overflow-wrap:anywhere;color:#3a3034}.saved-recording-content span{font-size:.75rem;color:#877b7c;line-height:1.5}.saved-recording-content audio{width:100%;max-width:100%;height:40px;margin-top:4px}.audio-delete-button{width:36px;height:36px;flex:0 0 36px;border:1px solid #eee0dc;border-radius:10px;color:#9b3340;background:#fff8f6}.audio-delete-button:hover{background:#f7e7e5}.no-recordings{padding:23px 15px;text-align:center;display:grid;justify-items:center;gap:9px;border:1px dashed #ddc9c3;border-radius:15px;color:#8b7e7e;font-size:.83rem}.no-recordings i{font-size:1.35rem;color:#b67c7d}
+.mobile-bottom-bar{backdrop-filter:blur(16px);background:rgba(255,254,250,.96);border-top:1px solid #e7ddd7;box-shadow:0 -8px 24px rgba(40,25,25,.045)}
+/* Dark theme stays cohesive */
+[data-theme="dark"] body{background:var(--bg-dark)}
+[data-theme="dark"] .sidebar{background:linear-gradient(180deg,#151821,#11131a);border-color:#292a34}
+[data-theme="dark"] .brand{border-color:#2b2d37}[data-theme="dark"] .nav-item.active{background:rgba(211,47,47,.14)}
+[data-theme="dark"] .header,[data-theme="dark"] .mobile-bottom-bar{background:rgba(21,24,33,.94);border-color:#2b2d37}
+[data-theme="dark"] .search-bar,[data-theme="dark"] .cantiga-controls-bar,[data-theme="dark"] .cantiga-lyric,[data-theme="dark"] .audio-recording-status{background:#191d27;border-color:#2a2e39}
+[data-theme="dark"] .stat-card,[data-theme="dark"] .card,[data-theme="dark"] .cantiga-view,[data-theme="dark"] .form-card,[data-theme="dark"] .settings-card,[data-theme="dark"] .audio-recorder-controls,[data-theme="dark"] .saved-recording-item,[data-theme="dark"] .saved-recording-content audio{background:var(--bg-card);border-color:var(--border-color)}
+[data-theme="dark"] .cantiga-title-text,[data-theme="dark"] .page-title h2,[data-theme="dark"] .stat-val,[data-theme="dark"] .audio-panel-heading h2,[data-theme="dark"] .cantiga-lyric,[data-theme="dark"] .saved-recording-content strong{color:var(--text-white)}
+[data-theme="dark"] .audio-recordings-panel{background:#171922;border-color:#2a2d37}[data-theme="dark"] .audio-count,[data-theme="dark"] .btn-secondary,[data-theme="dark"] .btn-pill,[data-theme="dark"] .menu-toggle,[data-theme="dark"] .btn-back-header{background:#191d27;border-color:#2b2f3b;color:var(--text-white)}
+/* Desktop layouts */
+@media(min-width:1200px){.sidebar{width:278px;flex:0 0 278px}.main-content{padding:38px clamp(34px,4vw,64px)}.stats-container{grid-template-columns:repeat(2,minmax(240px,1fr));max-width:900px}.cantiga-view{padding:42px}.cantiga-lyric{max-width:100%;font-size:clamp(1.2rem,1.35vw,1.5rem)}}
+@media(min-width:1500px){.main-content{padding-left:clamp(56px,5vw,90px);padding-right:clamp(56px,5vw,90px)}.cantiga-view{max-width:1240px}.stats-container{gap:22px}}
+@media(max-width:1050px){.cantiga-actions-bar{grid-template-columns:repeat(2,minmax(0,1fr))}.main-content{padding:26px}}
+@media(max-width:820px){
+ .app-container{height:100dvh;min-height:0}.sidebar{width:min(86vw,330px);max-width:330px;padding:18px 14px 16px;box-shadow:18px 0 45px rgba(30,15,20,.18)}
+ .header{min-height:72px;padding:11px 14px;gap:10px}.left-header-controls{gap:8px}.menu-toggle{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px}.btn-back-header{display:none!important}.search-bar{height:44px;min-width:0;flex:1;padding:0 12px}.search-bar input{min-width:0;width:100%;font-size:.8rem}.main-content{padding:22px 16px 28px}.page-title{margin-bottom:20px}.page-title h2{font-size:1.7rem}.stats-container{gap:12px;margin:22px 0 30px}.stat-card{padding:18px;border-radius:18px}.stat-label{font-size:.75rem}.card{padding:18px;border-radius:18px}
+ .cantiga-view{padding:20px 16px;border-radius:22px;margin:0 auto 18px}.cantiga-controls-bar{padding:10px;gap:10px;margin-bottom:22px}.font-size-controls{gap:6px}.btn-pill{min-height:38px;padding:8px 11px;font-size:.78rem}.cantiga-title-text{font-size:clamp(1.65rem,6vw,2.1rem);margin:16px 0 11px}.cantiga-meta-details{font-size:.77rem}.cantiga-lyric{padding:19px 17px;font-size:var(--lyric-font-size,1.2rem);line-height:1.85;margin:20px 0}.cantiga-actions-bar{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding-top:19px}.cantiga-actions-bar .btn{padding:12px 8px;font-size:.78rem}
+ .audio-recordings-panel{padding:16px;margin:22px 0;border-radius:18px}.audio-panel-heading{gap:12px;margin-bottom:16px}.audio-panel-heading p{font-size:.8rem}.audio-recorder-controls{padding:14px}.audio-recorder-buttons{display:grid;grid-template-columns:1fr;gap:8px}.audio-recorder-buttons .btn{width:100%;min-height:45px}.saved-recording-item{padding:12px;gap:9px}.saved-recording-icon{width:34px;height:34px;flex-basis:34px}.audio-delete-button{width:32px;height:32px;flex-basis:32px}.mobile-bottom-bar{padding-bottom:env(safe-area-inset-bottom,0);min-height:68px}
+}
+@media(max-width:480px){.main-content{padding:19px 12px 25px}.header{padding:10px 11px}.search-bar{gap:8px}.search-bar input{font-size:.75rem}.stats-container{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat-card{padding:15px 12px}.stat-val{font-size:1.8rem}.stat-label{font-size:.7rem}.cantiga-view{padding:15px 12px}.cantiga-controls-bar{align-items:flex-start}.font-size-controls{width:100%}.cantiga-controls-bar>div:last-child{width:100%}.cantiga-controls-bar>div:last-child .btn-pill{width:100%}.cantiga-actions-bar{grid-template-columns:1fr 1fr}.cantiga-actions-bar .btn{min-height:45px;font-size:.73rem}.audio-panel-heading h2{font-size:1.2rem}.audio-count{font-size:.7rem}.saved-recording-content span{font-size:.7rem}.mobile-bottom-bar button span{font-size:.68rem}}
+@media(max-width:350px){.stats-container,.cantiga-actions-bar{grid-template-columns:1fr}.cantiga-meta-details{display:grid}.saved-recording-item{flex-wrap:wrap}.saved-recording-content{flex-basis:calc(100% - 48px)}.audio-delete-button{margin-left:auto}}
+@media(orientation:landscape) and (max-height:500px) and (max-width:900px){.header{min-height:58px;padding:6px 12px}.main-content{padding:14px}.mobile-bottom-bar{min-height:54px}.sidebar{padding-top:12px}.brand{padding-bottom:12px}.nav-section-title{padding-top:10px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+
+/* PATCH DE ESTABILIDADE DESKTOP — corrige largura, overflow e grids */
+@media (min-width: 821px) {
+  html, body { width:100%; min-width:0; min-height:100%; margin:0; }
+  body { overflow:hidden; }
+  .app-container {
+    display:flex !important;
+    width:100% !important;
+    max-width:100vw;
+    height:100dvh !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+    align-items:stretch;
+  }
+  .sidebar {
+    position:relative !important;
+    inset:auto !important;
+    display:flex !important;
+    flex:0 0 270px !important;
+    width:270px !important;
+    min-width:240px;
+    max-width:300px;
+    height:100% !important;
+    max-height:100dvh;
+    overflow-x:hidden;
+    overflow-y:auto;
+    transform:none !important;
+    visibility:visible !important;
+  }
+  .main-wrapper {
+    display:flex !important;
+    flex:1 1 0 !important;
+    width:calc(100% - 270px);
+    min-width:0 !important;
+    max-width:calc(100vw - 240px);
+    height:100dvh !important;
+    overflow:hidden !important;
+  }
+  .header {
+    display:flex;
+    flex:0 0 auto;
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+  .main-content {
+    display:block;
+    flex:1 1 auto !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:auto;
+    min-height:0;
+    box-sizing:border-box;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    padding:clamp(24px,2.5vw,42px) clamp(26px,3vw,54px) 48px !important;
+  }
+  .main-content > * { box-sizing:border-box; min-width:0; }
+  .page-title { width:100%; }
+  .stats-container {
+    width:100%;
+    max-width:1200px;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    align-items:stretch;
+  }
+  .grid-cards {
+    display:grid;
+    width:100%;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    align-items:stretch;
+    gap:20px;
+  }
+  .grid-cards > *, .stats-container > * { min-width:0; }
+  .cantiga-view, .form-container, .form-card, .settings-card {
+    box-sizing:border-box;
+    width:100%;
+    max-width:1120px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .cantiga-view { padding:clamp(28px,3vw,46px); }
+  .cantiga-actions-bar { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .audio-recordings-panel, .audio-recorder-controls, .saved-recording-item { min-width:0; }
+  .saved-recording-content { min-width:0; }
+  .saved-recording-content audio { display:block; width:100%; }
+  .mobile-bottom-bar { display:none !important; }
+}
+@media (min-width:821px) and (max-width:1250px) {
+  .sidebar { flex-basis:245px !important; width:245px !important; }
+  .main-wrapper { width:calc(100% - 245px); max-width:calc(100vw - 245px); }
+  .main-content { padding:26px 28px 40px !important; }
+  .stats-container { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .grid-cards { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .cantiga-actions-bar { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (min-width:1600px) {
+  .sidebar { flex-basis:290px !important; width:290px !important; }
+  .main-wrapper { width:calc(100% - 290px); max-width:calc(100vw - 290px); }
+  .main-content { padding-left:clamp(48px,4vw,80px) !important; padding-right:clamp(48px,4vw,80px) !important; }
+  .grid-cards { grid-template-columns:repeat(4,minmax(0,1fr)); }
+}
+
+
+
+/* CORREÇÃO DEFINITIVA DA NAVEGAÇÃO DESKTOP */
+.sidebar {
+  color: #342b2f;
+  overflow-x: hidden !important;
+}
+.sidebar .brand-copy h1 { color: #342b2f !important; }
+.sidebar .brand-copy span { color: #777278 !important; }
+.sidebar .nav-menu {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 5px !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  list-style: none !important;
+}
+.sidebar .nav-section-title {
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 18px 12px 7px !important;
+  padding: 7px 8px !important;
+  line-height: 1.35 !important;
+  color: #8d7d7f !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+.sidebar .nav-item {
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 46px !important;
+  margin: 0 2px !important;
+  overflow: visible !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+.sidebar .nav-item button {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 46px !important;
+  max-height: none !important;
+  padding: 12px 14px !important;
+  margin: 0 !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  color: #655e63 !important;
+  font-family: var(--font-body) !important;
+  font-size: .88rem !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  text-align: left !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: none;
+}
+.sidebar .nav-item button i {
+  display: inline-block !important;
+  flex: 0 0 20px !important;
+  width: 20px !important;
+  min-width: 20px !important;
+  height: auto !important;
+  font-size: 1rem !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+  color: #9f2633 !important;
+}
+.sidebar .nav-item button:hover {
+  background: #f2e8e4 !important;
+  color: #8f2433 !important;
+}
+.sidebar .nav-item.active {
+  background: #f3e3e0 !important;
+  box-shadow: inset 3px 0 #9f2633 !important;
+}
+.sidebar .nav-item.active button {
+  background: transparent !important;
+  color: #8f2433 !important;
+  font-weight: 750 !important;
+}
+.sidebar .cloud-status {
+  flex: 0 0 auto !important;
+  color: #777278 !important;
+  background: #f7f4ef !important;
+  border: 1px solid #e8ded7 !important;
+}
+/* Se o tema escuro estiver selecionado, todos os textos do menu mantêm contraste. */
+[data-theme="dark"] .sidebar {
+  background: linear-gradient(180deg, #171923 0%, #11131a 100%) !important;
+  border-color: #2b2d37 !important;
+  color: #f2edf0 !important;
+}
+[data-theme="dark"] .sidebar .brand-copy h1 { color: #f5eef0 !important; }
+[data-theme="dark"] .sidebar .brand-copy span,
+[data-theme="dark"] .sidebar .nav-section-title { color: #b7a9ae !important; }
+[data-theme="dark"] .sidebar .nav-item button { color: #d1c9ce !important; }
+[data-theme="dark"] .sidebar .nav-item button i { color: #e05b68 !important; }
+[data-theme="dark"] .sidebar .nav-item button:hover,
+[data-theme="dark"] .sidebar .nav-item.active { background: rgba(211,47,63,.16) !important; }
+[data-theme="dark"] .sidebar .nav-item.active button { color: #fff0f1 !important; }
+[data-theme="dark"] .sidebar .cloud-status { color: #c4bac0 !important; background: #1a1c25 !important; border-color: #30313b !important; }
+@media (min-width: 821px) {
+  .sidebar { flex: 0 0 270px !important; width: 270px !important; min-width: 270px !important; max-width: 270px !important; }
+  .main-wrapper { min-width: 0 !important; flex: 1 1 0 !important; }
+}
+@media (min-width: 821px) and (max-height: 760px) {
+  .sidebar { padding-top: 14px !important; padding-bottom: 12px !important; gap: 8px !important; }
+  .sidebar .brand { padding-bottom: 14px !important; }
+  .sidebar .nav-section-title { margin-top: 10px !important; }
+  .sidebar .nav-item, .sidebar .nav-item button { min-height: 40px !important; }
+  .sidebar .nav-item button { padding-top: 9px !important; padding-bottom: 9px !important; }
+}
+
+</style>
+
+</head>
+<body>
+
+  <div class="app-container">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><i class="fa-solid fa-fire-flame-curved"></i></div>
+        <div class="brand-copy"><h1>TUCUVORI</h1><span>Acervo de Pontos Cantados</span></div>
+      </div>
+      <ul class="nav-menu">
+        <div class="nav-section-title">Navegação</div>
+        <li class="nav-item active" data-page="home">
+          <button><i class="fa-solid fa-house"></i> Início</button>
+        </li>
+        <li class="nav-item" data-page="categories">
+          <button><i class="fa-solid fa-layer-group"></i> Categorias</button>
+        </li>
+        <li class="nav-item" data-page="favorites">
+          <button><i class="fa-solid fa-star"></i> Favoritos</button>
+        </li>
+        <li class="nav-item" data-page="recents">
+          <button><i class="fa-solid fa-clock"></i> Recentes</button>
+        </li>
+
+        <div class="nav-section-title">Ações Rápidas</div>
+        <li class="nav-item" data-page="add-cantiga">
+          <button><i class="fa-solid fa-plus-circle" style="color: var(--gold-primary);"></i> Adicionar Novo Ponto</button>
+        </li>
+        <li class="nav-item" data-page="add-category">
+          <button><i class="fa-solid fa-folder-plus" style="color: var(--gold-primary);"></i> Adicionar Nova Categoria</button>
+        </li>
+
+        <div class="nav-section-title">Sistema</div>
+        <li class="nav-item" data-page="backup">
+          <button><i class="fa-solid fa-database"></i> Backup</button>
+        </li>
+        <li class="nav-item" data-page="settings">
+          <button><i class="fa-solid fa-gear"></i> Configurações</button>
+        </li>
+      </ul>
+      <div class="cloud-status">
+        <div class="status-dot"></div>
+        <span>Tucuvori 2026</span>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+      <header class="header">
+        <div class="left-header-controls">
+          <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menu"><i class="fa-solid fa-bars"></i></button>
+          <button class="btn-back-header" onclick="window.goBack()" title="Voltar à página anterior">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Voltar</span>
+          </button>
+        </div>
+        <div class="search-bar">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="globalSearch" placeholder="Buscar ponto, letra, entidade ou palavra-chave...">
+        </div>
+      </header>
+
+      <main class="main-content" id="mainContent">
+        <div class="loading-state"><span class="loading-orbit"></span><strong>Preparando seu acervo</strong><p>Conectando aos pontos cantados...</p></div>
+      </main>
+    </div>
+  </div>
+
+  <nav class="mobile-bottom-bar">
+    <button onclick="window.goBack()">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Voltar</span>
+    </button>
+    <button onclick="window.navigateTo('add-cantiga')">
+      <i class="fa-solid fa-plus-circle"></i>
+      <span>Novo Ponto</span>
+    </button>
+    <button onclick="window.navigateTo('add-category')">
+      <i class="fa-solid fa-folder-plus"></i>
+      <span>Nova Categoria</span>
+    </button>
+  </nav>
+
+  <div id="print-section"></div>
+
+  <!-- FIREBASE IMPORTS (MÓDULOS ESM) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, push, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAAW59AXhb8N6sJMXxuExF1sfuoxLa6As4",
+      authDomain: "meu-escritorio-8c82e.firebaseapp.com",
+      databaseURL: "https://meu-escritorio-8c82e-default-rtdb.firebaseio.com",
+      projectId: "meu-escritorio-8c82e",
+      storageBucket: "meu-escritorio-8c82e.firebasestorage.app",
+      messagingSenderId: "684347838633",
+      appId: "1:684347838633:web:2d92465d0a37ea185b19b8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    let activeRecorder = null;
+    let activeAudioChunks = [];
+    let activeRecordingStream = null;
+    let recordingStartedAt = 0;
+    let recordingTimer = null;
+    let recordingPaused = false;
+    let recordingCantigaId = null;
+
+    let state = {
+      categories: [],
+      cantigas: [],
+      settings: JSON.parse(localStorage.getItem('umbanda_settings')) || { theme: 'light', fontSize: '16px', mainColor: '#a81c1c' },
+      currentPage: 'home',
+      currentCategoryFilter: null,
+      currentCantigaId: null,
+      editingCantigaId: null,
+      editingCategoryId: null,
+      searchTerm: '',
+      lyricFontSizeRem: 1.25,
+      isFocusMode: false
+    };
+
+    let pageHistory = [];
+
+    const categoriesRef = ref(db, 'categories');
+    const cantigasRef = ref(db, 'cantigas');
+
+    onValue(categoriesRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        state.categories = Object.keys(data).map(key => ({
+          id: key,
+          name: data[key].name || '',
+          parentId: data[key].parentId || null,
+          icon: data[key].icon || 'fa-fire',
+          color: data[key].color || '#a81c1c'
+        }));
+      } else {
+        state.categories = [];
+      }
+      render();
+    });
+
+    onValue(cantigasRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        state.cantigas = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+      } else {
+        state.cantigas = [];
+      }
+      render();
+    });
+
+    function applySettings() {
+      document.documentElement.setAttribute('data-theme', state.settings.theme);
+      document.documentElement.style.setProperty('--base-font-size', state.settings.fontSize);
+      document.documentElement.style.setProperty('--lyric-font-size', `${state.lyricFontSizeRem}rem`);
+      if (state.settings.mainColor) {
+        document.documentElement.style.setProperty('--gold-primary', state.settings.mainColor);
+      }
+      localStorage.setItem('umbanda_settings', JSON.stringify(state.settings));
+    }
+
+    function formatDate(isoString) {
+      if(!isoString) return '';
+      const date = new Date(isoString);
+      return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function getCantigaCategoryName(catId) {
+      const cat = state.categories.find(c => c.id === catId);
+      if(!cat) return 'Sem Categoria';
+      if(cat.parentId) {
+        const parent = state.categories.find(c => c.id === cat.parentId);
+        return parent ? `${parent.name} / ${cat.name}` : cat.name;
+      }
+      return cat.name;
+    }
+
+    window.navigateTo = function(page, categoryId = null, recordHistory = true) {
+      if (recordHistory && (state.currentPage !== page || state.currentCategoryFilter !== categoryId)) {
+        pageHistory.push({
+          page: state.currentPage,
+          categoryId: state.currentCategoryFilter,
+          cantigaId: state.currentCantigaId
+        });
+      }
+
+      state.currentPage = page;
+      if (categoryId !== null || (page !== 'add-cantiga' && page !== 'add-category')) {
+        state.currentCategoryFilter = categoryId;
+      }
+
+      if(page !== 'add-cantiga') state.editingCantigaId = null;
+      if(page !== 'add-category') state.editingCategoryId = null;
+
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.page === page);
+      });
+
+      if (page !== 'view-cantiga') {
+        state.isFocusMode = false;
+      }
+
+      closeMobileMenu();
+      render();
+
+      const mainEl = document.getElementById('mainContent');
+      if (mainEl) mainEl.scrollTop = 0;
+    };
+
+    window.goBack = function() {
+      if (pageHistory.length > 0) {
+        const previousState = pageHistory.pop();
+        state.currentCantigaId = previousState.cantigaId;
+        window.navigateTo(previousState.page, previousState.categoryId, false);
+      } else {
+        window.navigateTo('home', null, false);
+      }
+    };
+
+    function closeMobileMenu() {
+      const sidebarEl = document.getElementById('sidebar');
+      const overlayEl = document.getElementById('sidebarOverlay');
+      const toggleEl = document.getElementById('menuToggle');
+      sidebarEl?.classList.remove('open');
+      overlayEl?.classList.remove('active');
+      document.body.classList.remove('mobile-menu-open');
+      if (toggleEl) {
+        toggleEl.setAttribute('aria-expanded', 'false');
+        toggleEl.setAttribute('aria-label', 'Abrir menu');
+        const iconEl = toggleEl.querySelector('i');
+        if (iconEl) {
+          iconEl.classList.remove('fa-xmark');
+          iconEl.classList.add('fa-bars');
+        }
+      }
+    }
+
+    const mainContent = document.getElementById('mainContent');
+
+    function render() {
+      applySettings();
+
+      if (state.searchTerm.trim() !== '') {
+        renderSearchResults();
+        return;
+      }
+
+      switch (state.currentPage) {
+        case 'home': renderHome(); break;
+        case 'categories': renderCategories(); break;
+        case 'category-detail': renderCategoryDetail(state.currentCategoryFilter); break;
+        case 'favorites': renderFavorites(); break;
+        case 'recents': renderRecents(); break;
+        case 'add-cantiga': renderAddCantiga(); break;
+        case 'add-category': renderAddCategory(); break;
+        case 'backup': renderBackup(); break;
+        case 'settings': renderSettings(); break;
+        case 'view-cantiga': renderCantigaView(state.currentCantigaId); break;
+        default: renderHome();
+      }
+    }
+
+    function renderHome() {
+      const totalCategories = state.categories.length;
+      const totalCantigas = state.cantigas.length;
+      
+      const recents = [...state.cantigas]
+        .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 10);
+
+      mainContent.innerHTML = `
+        <div class="page-title">
+          <h2>Início</h2>
+        </div>
+
+        <div class="app-info-card">
+          <h3><i class="fa-solid fa-circle-info"></i> Sobre o Aplicativo</h3>
+          <p>Bem-vindo ao <strong>Tucuvori: Pontos Cantados de Umbanda</strong>. Este sistema foi desenvolvido para organizar, consultar e gerenciar o acervo de pontos cantados, promovendo facilidade de acesso a letras, buscas rápidas por categorias ou palavras-chave e suporte à navegação intuitiva.</p>
+        </div>
+
+        <div class="stats-container">
+          <div class="stat-card">
+            <i class="fa-solid fa-layer-group stat-icon"></i>
+            <div>
+              <div class="stat-val">${totalCategories}</div>
+              <div class="stat-label">Categorias / Subcategorias</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i class="fa-solid fa-music stat-icon"></i>
+            <div>
+              <div class="stat-val">${totalCantigas}</div>
+              <div class="stat-label">Pontos Adicionados</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom: 16px; font-family: var(--font-title); color: var(--gold-primary);">Últimos 10 Pontos Adicionados</h3>
+        ${recents.length === 0 ? '<p style="color: var(--text-muted);">Nenhum ponto adicionado recentemente.</p>' : ''}
+        <div class="grid-cards">
+          ${recents.map(c => renderCantigaCardHtml(c)).join('')}
+        </div>
+      `;
+    }
+
+    function renderCategories() {
+      const mainCategories = state.categories
+        .filter(c => !c.parentId)
+        .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
+
+      mainContent.innerHTML = `
+        <div class="page-title">
+          <h2>Categorias</h2>
+          <button class="btn btn-primary" onclick="window.navigateTo('add-category')">
+            <i class="fa-solid fa-plus"></i> Adicionar Nova Categoria
+          </button>
+        </div>
+        ${mainCategories.length === 0 ? '<p style="color: var(--text-muted);">Nenhuma categoria cadastrada.</p>' : ''}
+        <div class="grid-cards">
+          ${mainCategories.map(cat => renderCategoryCardHtml(cat)).join('')}
+        </div>
+      `;
+    }
+
+    // Retorna a categoria e TODAS as suas descendentes, inclusive subcategorias aninhadas.
+    // Assim, o cartão de uma categoria-pai mostra a quantidade total real de cantigas.
+    function getCategoryTreeIds(categoryId) {
+      const ids = new Set([String(categoryId)]);
+      let changed = true;
+      while (changed) {
+        changed = false;
+        state.categories.forEach(category => {
+          const parentId = category.parentId == null ? '' : String(category.parentId);
+          const id = String(category.id);
+          if (parentId && ids.has(parentId) && !ids.has(id)) {
+            ids.add(id);
+            changed = true;
+          }
+        });
+      }
+      return ids;
+    }
+
+    function renderCategoryCardHtml(cat) {
+      const allCatIds = getCategoryTreeIds(cat.id);
+      const count = state.cantigas.filter(c => allCatIds.has(String(c.categoryId))).length;
+      const subCount = Math.max(0, allCatIds.size - 1);
+
+      return `
+        <div class="card" onclick="window.navigateTo('category-detail', '${cat.id}')">
+          <div>
+            <div class="card-header">
+              <div class="card-icon" style="background-color: ${cat.color}20; color: ${cat.color};">
+                <i class="fa-solid ${cat.icon}"></i>
+              </div>
+              <div onclick="event.stopPropagation();">
+                <button onclick="window.editCategory('${cat.id}')" style="color: var(--text-muted); margin-right: 8px;" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                <button onclick="window.deleteCategory('${cat.id}')" style="color: var(--red-dark);" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            <div class="card-title">${cat.name}</div>
+            <div class="card-subtitle">
+              ${count} cantigas no total ${subCount > 0 ? `• ${subCount} subcategorias` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCategoryDetail(catId) {
+      const category = state.categories.find(c => c.id === catId);
+      if(!category) return window.navigateTo('categories');
+
+      const subcategories = state.categories
+        .filter(c => c.parentId === catId)
+        .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
+
+      const allCategoryIds = getCategoryTreeIds(catId);
+      const cantigas = state.cantigas.filter(c => allCategoryIds.has(String(c.categoryId)));
+
+      mainContent.innerHTML = `
+        <div class="page-title">
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <i class="fa-solid ${category.icon}" style="color: ${category.color}; font-size: 1.5rem;"></i>
+            <h2>${category.name}</h2>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="window.exportCategoryToPDF('${catId}')"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+            <button class="btn btn-secondary" onclick="window.navigateTo('add-category', '${catId}')"><i class="fa-solid fa-folder-plus"></i> Subcategoria</button>
+            <button class="btn btn-primary" onclick="window.navigateTo('add-cantiga', '${catId}')"><i class="fa-solid fa-plus"></i> Ponto</button>
+          </div>
+        </div>
+
+        ${subcategories.length > 0 ? `
+          <h3 style="margin-bottom: 16px; font-family: var(--font-title); color: var(--gold-primary);">Subcategorias</h3>
+          <div class="grid-cards" style="margin-bottom: 32px;">
+            ${subcategories.map(sc => renderCategoryCardHtml(sc)).join('')}
+          </div>
+        ` : ''}
+        
+        <h3 style="margin-bottom: 16px; font-family: var(--font-title); color: var(--gold-primary);">Pontos em ${category.name}</h3>
+        ${cantigas.length === 0 ? '<p style="color: var(--text-muted); margin-bottom: 24px;">Nenhum ponto encontrado nesta categoria ou subcategorias.</p>' : ''}
+        
+        <div class="grid-cards">
+          ${cantigas.map(c => renderCantigaCardHtml(c)).join('')}
+        </div>
+      `;
+    }
+
+    function renderCantigaCardHtml(cantiga) {
+      const isFav = cantiga.favorite;
+      return `
+        <div class="card" onclick="window.viewCantiga('${cantiga.id}')">
+          <div>
+            <div class="card-header">
+              <span class="tag">${getCantigaCategoryName(cantiga.categoryId)}</span>
+              <button onclick="event.stopPropagation(); window.toggleFavorite('${cantiga.id}')" style="color: ${isFav ? 'var(--gold-primary)' : 'var(--text-muted)'}">
+                <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-star"></i>
+              </button>
+            </div>
+            <div class="card-title">${cantiga.title}</div>
+            <div class="card-subtitle" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px;">
+              ${cantiga.lyrics}
+            </div>
+          </div>
+          <div style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px;" onclick="event.stopPropagation();">
+            <span style="font-size: 0.75rem; color: var(--text-muted);">${formatDate(cantiga.createdAt)}</span>
+            <div>
+              <button onclick="window.duplicateCantiga('${cantiga.id}')" title="Duplicar" style="color: var(--text-muted); margin-right: 8px;"><i class="fa-solid fa-copy"></i></button>
+              <button onclick="window.editCantiga('${cantiga.id}')" title="Editar" style="color: var(--text-muted); margin-right: 8px;"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="window.deleteCantiga('${cantiga.id}')" title="Excluir" style="color: var(--red-dark);"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFavorites() {
+      const favs = state.cantigas.filter(c => c.favorite);
+      mainContent.innerHTML = `
+        <div class="page-title"><h2>Pontos Favoritos</h2></div>
+        ${favs.length === 0 ? '<p style="color: var(--text-muted);">Nenhum ponto marcado como favorito.</p>' : ''}
+        <div class="grid-cards">${favs.map(c => renderCantigaCardHtml(c)).join('')}</div>
+      `;
+    }
+
+    function renderRecents() {
+      const recents = [...state.cantigas].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 10);
+      mainContent.innerHTML = `
+        <div class="page-title"><h2>Adicionados Recentemente</h2></div>
+        ${recents.length === 0 ? '<p style="color: var(--text-muted);">Nenhum ponto cadastrado.</p>' : ''}
+        <div class="grid-cards">${recents.map(c => renderCantigaCardHtml(c)).join('')}</div>
+      `;
+    }
+
+    function renderAddCantiga() {
+      const cantigaToEdit = state.editingCantigaId ? state.cantigas.find(c => c.id === state.editingCantigaId) : null;
+      const targetCategoryId = cantigaToEdit ? cantigaToEdit.categoryId : state.currentCategoryFilter;
+
+      const sortedCategories = [...state.categories].sort((a, b) => 
+        getCantigaCategoryName(a.id).localeCompare(getCantigaCategoryName(b.id), 'pt-BR', { sensitivity: 'base' })
+      );
+
+      mainContent.innerHTML = `
+        <div class="page-title">
+          <h2>${cantigaToEdit ? 'Editar Ponto' : 'Adicionar Novo Ponto'}</h2>
+        </div>
+        <div class="form-container">
+          <form id="standaloneFormCantiga">
+            <div class="form-group">
+              <label>Título do Ponto</label>
+              <input type="text" id="cTitle" class="form-control" required placeholder="Ex: Ponto de Ogum Beira-Mar" value="${cantigaToEdit ? cantigaToEdit.title : ''}">
+            </div>
+
+            <div class="form-group">
+              <label>Categoria / Subcategoria</label>
+              <select id="cCategory" class="form-control" required>
+                ${sortedCategories.length === 0 ? '<option value="">Nenhuma categoria encontrada - crie uma primeiro</option>' : ''}
+                ${sortedCategories.map(c => `<option value="${c.id}" ${targetCategoryId === c.id ? 'selected' : ''}>${getCantigaCategoryName(c.id)}</option>`).join('')}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Tags (separadas por vírgula)</label>
+              <input type="text" id="cTags" class="form-control" placeholder="Ex: Proteção, Abertura, Demanda" value="${cantigaToEdit && cantigaToEdit.tags ? cantigaToEdit.tags.join(', ') : ''}">
+            </div>
+
+            <div class="form-group">
+              <label>Letra da Cantiga</label>
+              <textarea id="cLyrics" class="form-control" required placeholder="Digite a letra completa da cantiga aqui...">${cantigaToEdit ? cantigaToEdit.lyrics : ''}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Observações / Autor (Opcional)</label>
+              <input type="text" id="cNotes" class="form-control" placeholder="Ex: Toque: Nagô / Autor: Desconhecido" value="${cantigaToEdit && cantigaToEdit.notes ? cantigaToEdit.notes : ''}">
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="window.goBack()">Cancelar</button>
+              <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar Ponto</button>
+            </div>
+          </form>
+        </div>
+      `;
+
+      setTimeout(() => {
+        const form = document.getElementById('standaloneFormCantiga');
+        if (form) {
+          setupColorChooser('catColor');
+          form.onsubmit = (e) => {
+            e.preventDefault();
+            const title = document.getElementById('cTitle').value;
+            const categoryId = document.getElementById('cCategory').value;
+            const tagsStr = document.getElementById('cTags').value;
+            const lyrics = document.getElementById('cLyrics').value;
+            const notes = document.getElementById('cNotes').value;
+
+            if(!categoryId) {
+              alert('Crie ao menos uma categoria antes de adicionar um ponto.');
+              return;
+            }
+
+            const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t !== '') : [];
+
+            if (state.editingCantigaId) {
+              update(ref(db, `cantigas/${state.editingCantigaId}`), {
+                title, categoryId, tags, lyrics, notes, updatedAt: new Date().toISOString()
+              });
+              alert('Ponto atualizado com sucesso!');
+            } else {
+              const newRef = push(ref(db, 'cantigas'));
+              set(newRef, {
+                title, categoryId, tags, lyrics, notes, favorite: false, createdAt: new Date().toISOString()
+              });
+              alert('Ponto salvo com sucesso!');
+            }
+
+            state.editingCantigaId = null;
+            window.goBack();
+          };
+        }
+      }, 0);
+    }
+
+    const TUCUVORI_COLOR_PALETTE = [
+      ['#8f1d2c','Vinho'], ['#b4232f','Vermelho'], ['#d97706','Âmbar'], ['#eab308','Amarelo'],
+      ['#15803d','Verde'], ['#0f766e','Turquesa'], ['#0369a1','Azul'], ['#4338ca','Índigo'],
+      ['#7e22ce','Roxo'], ['#be185d','Rosa'], ['#78350f','Marrom'], ['#475569','Cinza'],
+      ['#171717','Preto'], ['#ffffff','Branco']
+    ];
+
+    function renderColorChooser(id, value) {
+      const current = value || '#8f1d2c';
+      return `
+        <div class="color-chooser" data-color-chooser="${id}">
+          <input type="hidden" id="${id}" value="${current}">
+          <div class="color-palette" role="group" aria-label="Cores disponíveis">
+            ${TUCUVORI_COLOR_PALETTE.map(([color, name]) => `<button type="button" class="color-swatch" data-color="${color}" title="${name}" aria-label="${name}" style="--swatch-color:${color}"></button>`).join('')}
+          </div>
+          <div class="color-custom-row">
+            <div class="color-current-preview" aria-hidden="true" style="--current-color:${current}"></div>
+            <div class="color-current-copy"><strong>Cor selecionada</strong><span class="color-hex">${current.toUpperCase()}</span></div>
+            <button type="button" class="btn-color-custom"><i class="fa-solid fa-palette"></i> Cor personalizada</button>
+            <input type="color" class="native-color-input" aria-label="Escolher uma cor personalizada" value="${current}">
+          </div>
+        </div>`;
+    }
+
+    function setupColorChooser(id, onChange) {
+      const input = document.getElementById(id);
+      const root = document.querySelector(`[data-color-chooser="${id}"]`);
+      if (!input || !root) return;
+      const preview = root.querySelector('.color-current-preview');
+      const hex = root.querySelector('.color-hex');
+      const native = root.querySelector('.native-color-input');
+      const paint = (value, notify = true) => {
+        input.value = value;
+        native.value = value;
+        preview.style.setProperty('--current-color', value);
+        hex.textContent = value.toUpperCase();
+        root.querySelectorAll('.color-swatch').forEach(button => {
+          const selected = button.dataset.color.toLowerCase() === value.toLowerCase();
+          button.classList.toggle('is-selected', selected);
+          button.setAttribute('aria-pressed', String(selected));
+        });
+        if (notify && typeof onChange === 'function') onChange(value);
+      };
+      root.querySelectorAll('.color-swatch').forEach(button => button.addEventListener('click', () => paint(button.dataset.color)));
+      root.querySelector('.btn-color-custom').addEventListener('click', () => native.click());
+      native.addEventListener('input', event => paint(event.target.value));
+      paint(input.value, false);
+    }
+
+    function renderAddCategory() {
+      const catToEdit = state.editingCategoryId ? state.categories.find(c => c.id === state.editingCategoryId) : null;
+      const targetParentId = catToEdit ? catToEdit.parentId : state.currentCategoryFilter;
+
+      const sortedParentCategories = state.categories
+        .filter(c => !catToEdit || c.id !== catToEdit.id)
+        .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
+
+      mainContent.innerHTML = `
+        <div class="page-title">
+          <h2>${catToEdit ? 'Editar Categoria' : 'Adicionar Nova Categoria'}</h2>
+        </div>
+        <div class="form-container">
+          <form id="standaloneFormCategory">
+            <div class="form-group">
+              <label>Nome da Categoria</label>
+              <input type="text" id="catName" class="form-control" required placeholder="Ex: Ogum, Exu, Ponto de Entrada..." value="${catToEdit ? catToEdit.name : ''}">
+            </div>
+
+            <div class="form-group">
+              <label>Categoria Pai (Deixe em branco se for Categoria Principal)</label>
+              <select id="catParentId" class="form-control">
+                <option value="">Nenhuma (Categoria Principal)</option>
+                ${sortedParentCategories
+                  .map(c => `<option value="${c.id}" ${targetParentId === c.id ? 'selected' : ''}>${c.parentId ? '— ' : ''}${c.name}</option>`)
+                  .join('')
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Ícone Representativo</label>
+              <select id="catIcon" class="form-control">
+                <option value="fa-water">Água</option>
+                <option value="fa-ring">Aliança</option>
+                <option value="fa-anchor">Âncora</option>
+                <option value="fa-tree">Árvore</option>
+                <option value="fa-drum">Atabaque</option>
+                <option value="fa-compass">Bússola</option>
+                <option value="fa-smoking">Cachimbo / Charuto</option>
+                <option value="fa-fire-burner">Caldeirão</option>
+                <option value="fa-horse-head">Cavalo</option>
+                <option value="fa-skull">Caveira</option>
+                <option value="fa-hat-cowboy">Chapéu</option>
+                <option value="fa-key">Chave</option>
+                <option value="fa-child">Criança</option>
+                <option value="fa-gem">Cristal</option>
+                <option value="fa-cross">Cruz</option>
+                <option value="fa-shield-halved">Escudo</option>
+                <option value="fa-sword">Espada</option>
+                <option value="fa-star">Estrela</option>
+                <option value="fa-star-and-crescent">Estrela e Lua</option>
+                <option value="fa-fire">Fogo</option>
+                <option value="fa-spa">Folha</option>
+                <option value="fa-flask">Garrafa</option>
+                <option value="fa-droplet">Gota</option>
+                <option value="fa-fan">Leque</option>
+                <option value="fa-book">Livro</option>
+                <option value="fa-moon">Lua</option>
+                <option value="fa-hands-holding-child">Mãos</option>
+                <option value="fa-hands-praying">Mãos em Oração</option>
+                <option value="fa-masks-theater">Máscara</option>
+                <option value="fa-wand-magic-sparkles">Mironga</option>
+                <option value="fa-coins">Moedas</option>
+                <option value="fa-eye">Olho</option>
+                <option value="fa-mountain">Pedreira</option>
+                <option value="fa-feather">Pena</option>
+                <option value="fa-circle-dot">Ponto Rabiscado</option>
+                <option value="fa-door-open">Porta</option>
+                <option value="fa-bolt">Raio</option>
+                <option value="fa-dharmachakra">Roda</option>
+                <option value="fa-bell">Sineta</option>
+                <option value="fa-sun">Sol</option>
+                <option value="fa-wine-glass">Taça</option>
+                <option value="fa-house-chimney-window">Terreiro</option>
+                <option value="fa-clover">Trevo</option>
+                <option value="fa-wheat-awn">Trigo</option>
+                <option value="fa-broom">Vassoura</option>
+                <option value="fa-wind">Vento</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Cor de Destaque</label>
+              ${renderColorChooser('catColor', catToEdit ? catToEdit.color : '#8f1d2c')}
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" onclick="window.goBack()">Cancelar</button>
+              <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Salvar Categoria</button>
+            </div>
+          </form>
+        </div>
+      `;
+
+      setTimeout(() => {
+        const form = document.getElementById('standaloneFormCategory');
+        if (form) {
+          form.onsubmit = (e) => {
+            e.preventDefault();
+            const name = document.getElementById('catName').value;
+            const parentId = document.getElementById('catParentId').value || null;
+            const icon = document.getElementById('catIcon').value;
+            const color = document.getElementById('catColor').value;
+
+            const categoryData = { name, icon, color };
+            if (parentId) categoryData.parentId = parentId;
+
+            if (state.editingCategoryId) {
+              if (!parentId) categoryData.parentId = null;
+              update(ref(db, `categories/${state.editingCategoryId}`), categoryData);
+              alert('Categoria atualizada com sucesso!');
+            } else {
+              const newRef = push(ref(db, 'categories'));
+              set(newRef, categoryData);
+              alert('Categoria criada com sucesso!');
+            }
+
+            state.editingCategoryId = null;
+            window.goBack();
+          };
+        }
+      }, 0);
+    }
+
+    /* ==========================================
+       VISUALIZAR CANTIGA (NOVO LAYOUT REDESENHADO)
+       ========================================== */
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    }
+    function formatAudioDuration(seconds) {
+      const s = Math.max(0, Math.floor(Number(seconds) || 0));
+      return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+    }
+    function setRecordingStatus(message, mode='') {
+      const el = document.getElementById('audioRecordingStatus');
+      if (!el) return;
+      el.classList.toggle('is-recording', mode === 'recording');
+      el.classList.toggle('is-paused', mode === 'paused');
+      const text = el.querySelector('span:nth-child(2)');
+      if (text) text.textContent = message;
+    }
+    function updateRecordingTimer() {
+      const timer = document.getElementById('audioRecordingTimer');
+      if (!timer || !recordingStartedAt) return;
+      let seconds = Math.floor((Date.now() - recordingStartedAt) / 1000);
+      if (activeRecorder && activeRecorder.state === 'paused') seconds = Math.floor((activeRecorder._elapsedBeforePause || 0));
+      timer.textContent = formatAudioDuration(seconds);
+    }
+    window.startCantigaRecording = async function(cantigaId) {
+      if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+        alert('Este navegador não oferece suporte à gravação. Abra o site em um navegador atualizado e em uma conexão segura (HTTPS).'); return;
+      }
+      if (activeRecorder && activeRecorder.state !== 'inactive') { alert('Finalize a gravação atual antes de iniciar outra.'); return; }
+      try {
+        recordingCantigaId = cantigaId;
+        activeRecordingStream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}});
+        activeAudioChunks = [];
+        const preferred = ['audio/webm;codecs=opus','audio/webm','audio/mp4'];
+        const mimeType = preferred.find(type => MediaRecorder.isTypeSupported(type));
+        activeRecorder = new MediaRecorder(activeRecordingStream, mimeType ? {mimeType} : undefined);
+        recordingStartedAt = Date.now();
+        recordingPaused = false;
+        activeRecorder._elapsedBeforePause = 0;
+        activeRecorder.ondataavailable = event => { if (event.data && event.data.size) activeAudioChunks.push(event.data); };
+        activeRecorder.onstart = () => {
+          const start = document.getElementById('startAudioRecording');
+          const pause = document.getElementById('pauseAudioRecording');
+          const stop = document.getElementById('stopAudioRecording');
+          if(start) start.disabled = true; if(pause) pause.disabled = false; if(stop) stop.disabled = false;
+          setRecordingStatus('Gravando... cante o ponto normalmente.', 'recording');
+          recordingTimer = setInterval(updateRecordingTimer, 500);
+        };
+        activeRecorder.onpause = () => { recordingPaused = true; setRecordingStatus('Gravação pausada.', 'paused'); const b=document.getElementById('pauseAudioRecording'); if(b) b.innerHTML='<i class="fa-solid fa-play"></i> Continuar'; };
+        activeRecorder.onresume = () => { recordingPaused = false; setRecordingStatus('Gravando... cante o ponto normalmente.', 'recording'); const b=document.getElementById('pauseAudioRecording'); if(b) b.innerHTML='<i class="fa-solid fa-pause"></i> Pausar'; };
+        activeRecorder.onerror = () => setRecordingStatus('Ocorreu um erro durante a gravação. Tente novamente.');
+        activeRecorder.onstop = async () => {
+          clearInterval(recordingTimer); recordingTimer = null;
+          if (activeRecordingStream) activeRecordingStream.getTracks().forEach(track => track.stop());
+          const start = document.getElementById('startAudioRecording'); const pause = document.getElementById('pauseAudioRecording'); const stop = document.getElementById('stopAudioRecording');
+          if(start) start.disabled = false; if(pause) { pause.disabled = true; pause.innerHTML='<i class="fa-solid fa-pause"></i> Pausar'; } if(stop) stop.disabled = true;
+          const blob = new Blob(activeAudioChunks, {type: activeRecorder.mimeType || 'audio/webm'});
+          const duration = Math.max(1, Math.round((Date.now() - recordingStartedAt) / 1000));
+          recordingStartedAt = 0;
+          if (!blob.size) { setRecordingStatus('Nenhum áudio foi capturado. Tente gravar novamente.'); return; }
+          // O Realtime Database armazena strings até cerca de 10 MB; limitamos o arquivo
+          // a 5 MB para que a conversão Base64 continue dentro de um tamanho razoável.
+          if (blob.size > 5 * 1024 * 1024) { setRecordingStatus('Gravação muito grande para salvar diretamente no Database. Grave um trecho mais curto (até 5 MB).'); alert('Para salvar o áudio diretamente no Firebase Realtime Database, grave um trecho mais curto (máximo de 5 MB).'); return; }
+          setRecordingStatus('Preparando áudio e salvando no Firebase Realtime Database...');
+          try {
+            const nameInput = document.getElementById('recordingName');
+            const name = (nameInput?.value || '').trim() || `Gravação ${new Date().toLocaleDateString('pt-BR')}`;
+            const dataUrl = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(String(reader.result || ''));
+              reader.onerror = () => reject(reader.error || new Error('Não foi possível ler o áudio gravado.'));
+              reader.readAsDataURL(blob);
+            });
+            if (!dataUrl.startsWith('data:audio/')) throw new Error('Formato de áudio inválido. Tente novamente em outro navegador.');
+            const recordRef = push(ref(db, `cantigas/${recordingCantigaId}/recordings`));
+            await set(recordRef, {name, dataUrl, duration, createdAt:Date.now(), author:'', contentType:blob.type || 'audio/webm', storageMode:'realtime-database'});
+            setRecordingStatus('Gravação salva no Database! Outras pessoas poderão abrir este ponto e ouvir o áudio.');
+            if (nameInput) nameInput.value = '';
+          } catch (error) {
+            console.error('Erro ao salvar gravação no Realtime Database:', error);
+            setRecordingStatus('Não foi possível salvar o áudio. Verifique as regras de escrita do Firebase Realtime Database e a conexão.');
+            alert('Não consegui salvar o áudio no Firebase Realtime Database. Verifique se as regras permitem escrita em cantigas e se há conexão. Detalhe: ' + (error?.message || 'erro desconhecido'));
+          }
+        };
+        activeRecorder.start(1000);
+      } catch (error) {
+        console.error(error);
+        if (activeRecordingStream) activeRecordingStream.getTracks().forEach(track => track.stop());
+        setRecordingStatus(error?.name === 'NotAllowedError' ? 'Acesso ao microfone negado. Autorize o microfone nas configurações do navegador.' : 'Não foi possível acessar o microfone. Verifique as permissões do navegador.');
+        alert('Não foi possível iniciar a gravação. Permita o uso do microfone e tente novamente.');
+      }
+    };
+    window.togglePauseCantigaRecording = function() {
+      if (!activeRecorder) return;
+      if (activeRecorder.state === 'recording') activeRecorder.pause();
+      else if (activeRecorder.state === 'paused') activeRecorder.resume();
+    };
+    window.stopCantigaRecording = function() {
+      if (activeRecorder && activeRecorder.state !== 'inactive') activeRecorder.stop();
+    };
+    window.deleteCantigaRecording = async function(cantigaId, recordingId) {
+      if (!confirm('Deseja realmente excluir esta gravação do acervo?')) return;
+      const cantiga = state.cantigas.find(c => c.id === cantigaId);
+      const rec = cantiga?.recordings?.[recordingId];
+      try {
+        await remove(ref(db, `cantigas/${cantigaId}/recordings/${recordingId}`));
+      } catch (error) { alert('Não foi possível excluir a gravação: ' + (error?.message || 'erro desconhecido')); }
+    };
+
+    function renderCantigaView(cantigaId) {
+      const cantiga = state.cantigas.find(c => c.id === cantigaId);
+      if(!cantiga) return window.navigateTo('home');
+
+      mainContent.innerHTML = `
+        <div class="cantiga-view ${state.isFocusMode ? 'focus-mode' : ''}">
+          <!-- Barra de Acessibilidade / Controles Superior -->
+          <div class="cantiga-controls-bar">
+            <div class="font-size-controls">
+              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Texto:</span>
+              <button class="btn-pill" onclick="window.changeLyricFontSize(-0.1)" title="Diminuir texto"><i class="fa-solid fa-minus"></i></button>
+              <button class="btn-pill" onclick="window.changeLyricFontSize(0.1)" title="Aumentar texto"><i class="fa-solid fa-plus"></i></button>
+              <button class="btn-pill" onclick="window.resetLyricFontSize()" title="Restaurar tamanho">Reset</button>
+            </div>
+            <div>
+              <button class="btn-pill" onclick="window.toggleFocusMode()" style="background: ${state.isFocusMode ? 'var(--gold-primary)' : 'transparent'}; color: ${state.isFocusMode ? '#fff' : 'inherit'}">
+                <i class="fa-solid ${state.isFocusMode ? 'fa-compress' : 'fa-expand'}"></i> ${state.isFocusMode ? 'Sair do Foco' : 'Modo Foco'}
+              </button>
+            </div>
+          </div>
+
+          <!-- Cabecalho do Ponto -->
+          <div class="cantiga-header">
+            <div class="top-meta">
+              <span class="tag">${getCantigaCategoryName(cantiga.categoryId)}</span>
+              <button onclick="window.toggleFavorite('${cantiga.id}')" style="font-size: 1.4rem; color: ${cantiga.favorite ? 'var(--gold-primary)' : 'var(--text-muted)'}" title="Favoritar">
+                <i class="${cantiga.favorite ? 'fa-solid' : 'fa-regular'} fa-star"></i>
+              </button>
+            </div>
+
+            <h1 class="cantiga-title-text">${cantiga.title}</h1>
+
+            <div class="cantiga-meta-details">
+              <span><i class="fa-regular fa-calendar"></i> Cadastrado em: ${formatDate(cantiga.createdAt)}</span>
+              ${cantiga.updatedAt ? `<span><i class="fa-solid fa-rotate"></i> Atualizado em: ${formatDate(cantiga.updatedAt)}</span>` : ''}
+            </div>
+
+            ${cantiga.tags && cantiga.tags.length > 0 ? `
+              <div style="display:flex; gap: 6px; flex-wrap: wrap; margin-top: 12px;">
+                ${cantiga.tags.map(t => `<span style="background: rgba(0,0,0,0.05); color: var(--text-muted); font-size: 0.75rem; padding: 2px 10px; border-radius: 12px; border: 1px solid var(--border-color);">#${t.trim()}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Gravação e reprodução do ponto cantado -->
+          <section class="audio-recordings-panel" aria-label="Gravações deste ponto">
+            <div class="audio-panel-heading">
+              <div>
+                <span class="audio-eyebrow"><i class="fa-solid fa-microphone-lines"></i> CANTAR E GRAVAR</span>
+                <h2>Cantar e gravar este ponto</h2>
+                <p>Grave sua própria versão deste ponto cantado. Ao salvar, outras pessoas também poderão ouvir por este site.</p>
+              </div>
+              <span class="audio-count"><i class="fa-solid fa-headphones"></i> ${(cantiga.recordings ? Object.keys(cantiga.recordings).length : 0)} ${(cantiga.recordings && Object.keys(cantiga.recordings).length === 1) ? 'áudio' : 'áudios'}</span>
+            </div>
+            <div class="audio-recorder-controls" id="audioRecorderControls">
+              <label class="audio-recorder-name-label" for="recordingName">Nome da gravação (opcional)</label>
+              <input id="recordingName" class="audio-recorder-name" type="text" maxlength="80" placeholder="Ex.: Voz e atabaque, versão da gira..." />
+              <div class="audio-recorder-buttons">
+                <button class="btn btn-primary" id="startAudioRecording" onclick="window.startCantigaRecording('${cantiga.id}')"><i class="fa-solid fa-microphone"></i> Gravar ponto</button>
+                <button class="btn btn-secondary" id="pauseAudioRecording" onclick="window.togglePauseCantigaRecording()" disabled><i class="fa-solid fa-pause"></i> Pausar</button>
+                <button class="btn btn-secondary" id="stopAudioRecording" onclick="window.stopCantigaRecording()" disabled><i class="fa-solid fa-stop"></i> Finalizar e salvar</button>
+              </div>
+              <div class="audio-recording-status" id="audioRecordingStatus" role="status" aria-live="polite"><span class="audio-status-dot"></span><span>Pronto para gravar. O navegador solicitará acesso ao microfone.</span><span class="audio-recording-timer" id="audioRecordingTimer">00:00</span></div>
+              <p class="audio-recording-note"><i class="fa-solid fa-shield-halved"></i> O áudio será salvo no Firebase Realtime Database ao finalizar. Para manter o banco leve, grave trechos curtos (até 5 MB). Use HTTPS e permita o acesso ao microfone.</p>
+            </div>
+            <div class="saved-recordings-list">
+              ${cantiga.recordings && Object.keys(cantiga.recordings).length ? Object.entries(cantiga.recordings).sort((a,b) => (b[1].createdAt || 0) - (a[1].createdAt || 0)).map(([rid, rec]) => `
+                <article class="saved-recording-item">
+                  <div class="saved-recording-icon"><i class="fa-solid fa-wave-square"></i></div>
+                  <div class="saved-recording-content">
+                    <strong>${escapeHtml(rec.name || 'Gravação do ponto')}</strong>
+                    <span>${rec.createdAt ? formatDate(rec.createdAt) : 'Data não informada'}${rec.duration ? ` · ${formatAudioDuration(rec.duration)}` : ''}${rec.author ? ` · ${escapeHtml(rec.author)}` : ''}</span>
+                    <audio controls preload="none" src="${escapeHtml(rec.dataUrl || rec.url || '')}" aria-label="Ouvir ${escapeHtml(rec.name || 'gravação do ponto')}"></audio>
+                  </div>
+                  <button class="audio-delete-button" title="Excluir gravação" aria-label="Excluir gravação" onclick="window.deleteCantigaRecording('${cantiga.id}','${rid}')"><i class="fa-solid fa-trash"></i></button>
+                </article>`).join('') : '<div class="no-recordings"><i class="fa-solid fa-music"></i><span>Nenhuma gravação ainda. Seja a primeira pessoa a registrar este ponto.</span></div>'}
+            </div>
+          </section>
+
+
+          <!-- Bloco Principal da Letra -->
+          <div class="cantiga-lyric">${cantiga.lyrics}</div>
+
+          <!-- Observações (se houver) -->
+          ${cantiga.notes ? `
+            <div class="cantiga-notes-card">
+              <i class="fa-solid fa-circle-info" style="color: var(--gold-primary); margin-right: 6px;"></i>
+              <strong>Observação:</strong> ${cantiga.notes}
+            </div>
+          ` : ''}
+
+          <!-- Ações Inferiores -->
+          <div class="cantiga-actions-bar">
+            <button class="btn btn-primary" onclick="window.editCantiga('${cantiga.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
+            <button class="btn btn-secondary" onclick="window.copyToClipboard(\`${cantiga.lyrics.replace(/`/g, '\\`')}\`)"><i class="fa-solid fa-copy"></i> Copiar Letra</button>
+            <button class="btn btn-secondary" onclick="window.printCantiga('${cantiga.id}')"><i class="fa-solid fa-print"></i> Imprimir</button>
+            <button class="btn btn-secondary" onclick="window.shareCantiga('${cantiga.id}')"><i class="fa-solid fa-share-nodes"></i> Compartilhar</button>
+          </div>
+        </div>
+      `;
+    }
+
+    window.changeLyricFontSize = function(delta) {
+      state.lyricFontSizeRem = Math.max(0.9, Math.min(2.5, state.lyricFontSizeRem + delta));
+      applySettings();
+    };
+
+    window.resetLyricFontSize = function() {
+      state.lyricFontSizeRem = 1.25;
+      applySettings();
+    };
+
+    window.toggleFocusMode = function() {
+      state.isFocusMode = !state.isFocusMode;
+      render();
+    };
+
+    function renderSearchResults() {
+      const term = state.searchTerm.toLowerCase();
+      const results = state.cantigas.filter(c => 
+        c.title.toLowerCase().includes(term) || 
+        c.lyrics.toLowerCase().includes(term) ||
+        (c.tags && c.tags.some(t => t.toLowerCase().includes(term)))
+      );
+
+      mainContent.innerHTML = `
+        <div class="page-title">
+          <h2>Resultados da Busca ("${state.searchTerm}")</h2>
+        </div>
+        ${results.length === 0 ? '<p style="color: var(--text-muted);">Nenhum ponto encontrado para este termo.</p>' : ''}
+        <div class="grid-cards">
+          ${results.map(c => renderCantigaCardHtml(c)).join('')}
+        </div>
+      `;
+    }
+
+    function renderBackup() {
+      mainContent.innerHTML = `
+        <div class="page-title"><h2>Backup e Restauração</h2></div>
+        <div class="cantiga-view">
+          <p style="margin-bottom: 20px; color: var(--text-muted);">Baixe uma cópia de segurança do Firebase ou restaure dados através de um arquivo JSON.</p>
+          <div style="display:flex; flex-direction:column; gap: 16px;">
+            <div>
+              <h3>Exportar Dados (JSON)</h3>
+              <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom: 8px;">Baixe um arquivo JSON contendo todas as suas categorias e cantigas do banco em nuvem.</p>
+              <button class="btn btn-primary" onclick="window.exportData()"><i class="fa-solid fa-download"></i> Baixar Backup JSON</button>
+            </div>
+            <hr style="border-color: var(--border-color);">
+            <hr style="border-color: var(--border-color);">
+            <div>
+              <h3>Exportar todas as cantigas em PDF</h3>
+              <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom: 8px;">Gera um único documento com todas as cantigas cadastradas, incluindo título, categoria, letra e observações. Na janela de impressão, escolha “Salvar como PDF”.</p>
+              <button class="btn btn-primary" onclick="window.exportAllCantigasToPDF()"><i class="fa-solid fa-file-pdf"></i> Exportar todas as cantigas em PDF</button>
+            </div>
+            <hr style="border-color: var(--border-color);">
+            <div>
+              <h3>Importar Dados (JSON)</h3>
+              <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom: 8px;">Importe um arquivo JSON para enviar dados em massa ao seu Firebase Realtime Database.</p>
+              <input type="file" id="importFile" accept=".json" style="display:none;">
+              <button class="btn btn-secondary" id="btnTriggerImport"><i class="fa-solid fa-upload"></i> Selecionar Arquivo JSON</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      setTimeout(() => {
+        const triggerBtn = document.getElementById('btnTriggerImport');
+        const fileInput = document.getElementById('importFile');
+        if (triggerBtn && fileInput) {
+          triggerBtn.onclick = () => fileInput.click();
+          fileInput.onchange = importData;
+        }
+      }, 0);
+    }
+
+    function renderSettings() {
+      mainContent.innerHTML = `
+        <div class="page-title"><h2>Configurações do Sistema</h2></div>
+        <div class="cantiga-view">
+          <div class="form-group">
+            <label>Tema Visual</label>
+            <select class="form-control" id="themeSelect">
+              <option value="light" ${state.settings.theme === 'light' ? 'selected' : ''}>Modo Claro (Papel Velho)</option>
+              <option value="dark" ${state.settings.theme === 'dark' ? 'selected' : ''}>Modo Escuro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tamanho Padrão da Interface</label>
+            <select class="form-control" id="fontSizeSelect">
+              <option value="14px" ${state.settings.fontSize === '14px' ? 'selected' : ''}>Pequena</option>
+              <option value="16px" ${state.settings.fontSize === '16px' ? 'selected' : ''}>Média (Padrão)</option>
+              <option value="18px" ${state.settings.fontSize === '18px' ? 'selected' : ''}>Grande</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Cor Principal de Destaque</label>
+            ${renderColorChooser('colorPicker', state.settings.mainColor || '#8f1d2c')}
+          </div>
+        </div>
+      `;
+
+      setTimeout(() => {
+        document.getElementById('themeSelect').addEventListener('change', (e) => updateSetting('theme', e.target.value));
+        document.getElementById('fontSizeSelect').addEventListener('change', (e) => updateSetting('fontSize', e.target.value));
+        setupColorChooser('colorPicker', (value) => updateSetting('mainColor', value));
+      }, 0);
+    }
+
+    /* OPERAÇÕES CRUD & AUXILIARES */
+    window.editCategory = function(id) {
+      state.editingCategoryId = id;
+      window.navigateTo('add-category');
+    };
+    
+    window.deleteCategory = function(id) {
+      if(confirm('Tem certeza? Isso excluirá a categoria do Firebase.')) {
+        remove(ref(db, `categories/${id}`));
+      }
+    };
+
+    window.editCantiga = function(id) {
+      state.editingCantigaId = id;
+      window.navigateTo('add-cantiga');
+    };
+    
+    window.deleteCantiga = function(id) {
+      if(confirm('Tem certeza que deseja excluir esta cantiga do Firebase?')) {
+        remove(ref(db, `cantigas/${id}`));
+        if(state.currentPage === 'view-cantiga') window.goBack();
+      }
+    };
+
+    window.duplicateCantiga = function(id) {
+      const item = state.cantigas.find(c => c.id === id);
+      if(item) {
+        const newRef = push(ref(db, 'cantigas'));
+        set(newRef, {
+          title: `${item.title} (Cópia)`,
+          categoryId: item.categoryId,
+          tags: item.tags || [],
+          lyrics: item.lyrics,
+          notes: item.notes || '',
+          favorite: false,
+          createdAt: new Date().toISOString()
+        });
+      }
+    };
+
+    window.toggleFavorite = function(id) {
+      const cantiga = state.cantigas.find(c => c.id === id);
+      if(cantiga) {
+        update(ref(db, `cantigas/${id}`), { favorite: !cantiga.favorite });
+      }
+    };
+
+    window.viewCantiga = function(id) {
+      state.currentCantigaId = id;
+      window.navigateTo('view-cantiga', state.currentCategoryFilter);
+    };
+
+    window.exportCategoryToPDF = function(catId) {
+      const category = state.categories.find(c => c.id === catId);
+      if(!category) return;
+
+      const subCatIds = state.categories.filter(c => c.parentId === catId).map(c => c.id);
+      const allCatIds = [catId, ...subCatIds];
+      const cantigas = state.cantigas.filter(c => allCatIds.includes(c.categoryId));
+
+      if(cantigas.length === 0) {
+        alert("Não há cantigas nesta categoria para exportar.");
+        return;
+      }
+
+      const printArea = document.getElementById('print-section');
+      let html = `
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="font-size: 2.2rem; margin-bottom: 5px; font-family: 'Space Grotesk', sans-serif;">Tucuvori: Pontos Cantados de Umbanda</h1>
+          <h2 style="font-size: 1.5rem; color: #444;">Categoria: ${category.name}</h2>
+          <p style="font-size: 0.9rem; color: #666;">Gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
+        </div>
+        <hr style="margin-bottom: 24px; border: 0; border-top: 2px solid #333;">
+      `;
+
+      cantigas.forEach(c => {
+        html += `
+          <div class="pdf-cantiga-item">
+            <div class="pdf-cantiga-title">${c.title} <span style="font-size: 0.85rem; font-weight: normal; color: #555;">(${getCantigaCategoryName(c.categoryId)})</span></div>
+            <div class="pdf-cantiga-lyrics">${c.lyrics}</div>
+            ${c.notes ? `<div style="font-style: italic; font-size: 0.85rem; color: #555; margin-top: 8px;">Obs: ${c.notes}</div>` : ''}
+          </div>
+        `;
+      });
+
+      printArea.innerHTML = html;
+      window.print();
+    };
+
+    window.exportAllCantigasToPDF = function() {
+      const cantigas = [...(state.cantigas || [])].sort((a, b) => {
+        const categoryA = getCantigaCategoryName(a.categoryId) || '';
+        const categoryB = getCantigaCategoryName(b.categoryId) || '';
+        const byCategory = categoryA.localeCompare(categoryB, 'pt-BR', { sensitivity: 'base' });
+        return byCategory || String(a.title || '').localeCompare(String(b.title || ''), 'pt-BR', { sensitivity: 'base' });
+      });
+
+      if (!cantigas.length) {
+        alert('Não há cantigas cadastradas para exportar.');
+        return;
+      }
+
+      const printArea = document.getElementById('print-section');
+      if (!printArea) {
+        alert('Não foi possível preparar o documento para impressão.');
+        return;
+      }
+
+      const safe = (value) => escapeHtml(String(value ?? ''));
+      let html = `
+        <div style="font-family:Arial,sans-serif;color:#111;">
+          <div style="text-align:center;margin-bottom:28px;">
+            <h1 style="font-size:24pt;margin:0 0 8px;">TUCUVORI</h1>
+            <h2 style="font-size:16pt;font-weight:normal;margin:0 0 8px;">Acervo de Pontos Cantados de Umbanda</h2>
+            <p style="font-size:10pt;color:#555;margin:0;">${cantigas.length} cantiga(s) · Documento gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
+          </div>
+          <hr style="border:0;border-top:2px solid #8f1d2c;margin-bottom:24px;">
+      `;
+
+      let previousCategory = null;
+      cantigas.forEach((cantiga, index) => {
+        const categoryName = getCantigaCategoryName(cantiga.categoryId) || 'Sem categoria';
+        const lyrics = safe(cantiga.lyrics || '').split('\n').join('<br>');
+        const notes = cantiga.notes ? `<p style="font-size:10pt;color:#555;font-style:italic;margin:8px 0 0;"><strong>Observações:</strong> ${safe(cantiga.notes).split('\n').join('<br>')}</p>` : '';
+        const categoryHeading = categoryName !== previousCategory
+          ? `<h2 style="font-size:15pt;color:#8f1d2c;margin:${index === 0 ? '0' : '26px'} 0 12px;padding-bottom:5px;border-bottom:1px solid #ddd;">${safe(categoryName)}</h2>`
+          : '';
+        html += `${categoryHeading}
+          <div class="pdf-cantiga-item" style="page-break-inside:avoid;break-inside:avoid;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #ddd;">
+            <div class="pdf-cantiga-title" style="font-size:13pt;font-weight:bold;margin-bottom:7px;">${index + 1}. ${safe(cantiga.title || 'Cantiga sem título')}</div>
+            <div class="pdf-cantiga-lyrics" style="white-space:pre-wrap;font-size:11pt;line-height:1.55;">${lyrics}</div>
+            ${notes}
+          </div>`;
+        previousCategory = categoryName;
+      });
+      html += '</div>';
+      printArea.innerHTML = html;
+
+      // Aguarda o navegador atualizar a área de impressão antes de abrir o diálogo.
+      setTimeout(() => window.print(), 100);
+    };
+
+    window.copyToClipboard = function(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Letra copiada para a área de transferência!');
+      });
+    };
+
+    window.printCantiga = function(id) {
+      const cantiga = state.cantigas.find(c => c.id === id);
+      if(!cantiga) return;
+
+      const printArea = document.getElementById('print-section');
+      printArea.innerHTML = `
+        <div style="margin-bottom: 20px;">
+          <h1 style="font-size: 1.8rem; margin-bottom: 4px;">${cantiga.title}</h1>
+          <p style="color: #555;"><strong>Categoria:</strong> ${getCantigaCategoryName(cantiga.categoryId)}</p>
+        </div>
+        <hr style="margin: 12px 0;">
+        <div class="pdf-cantiga-lyrics">${cantiga.lyrics}</div>
+        ${cantiga.notes ? `<p style="margin-top: 12px; font-style: italic; color: #555;">Obs: ${cantiga.notes}</p>` : ''}
+      `;
+      window.print();
+    };
+
+    window.shareCantiga = function(id) {
+      const cantiga = state.cantigas.find(c => c.id === id);
+      if(navigator.share && cantiga) {
+        navigator.share({
+          title: cantiga.title,
+          text: `${cantiga.title}\n\n${cantiga.lyrics}`
+        }).catch(() => {});
+      } else {
+        window.copyToClipboard(`${cantiga.title}\n\n${cantiga.lyrics}`);
+      }
+    };
+
+    window.exportData = function() {
+      const exportObject = { categories: state.categories, cantigas: state.cantigas };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `tucuvori_backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    };
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if(!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if(imported.categories && imported.cantigas) {
+            imported.categories.forEach(cat => {
+              const catRef = ref(db, `categories/${cat.id || push(ref(db, 'categories')).key}`);
+              set(catRef, { name: cat.name, parentId: cat.parentId || null, icon: cat.icon, color: cat.color });
+            });
+
+            imported.cantigas.forEach(cant => {
+              const cantRef = ref(db, `cantigas/${cant.id || push(ref(db, 'cantigas')).key}`);
+              set(cantRef, {
+                title: cant.title,
+                categoryId: cant.categoryId,
+                tags: cant.tags || [],
+                lyrics: cant.lyrics,
+                notes: cant.notes || '',
+                favorite: !!cant.favorite,
+                createdAt: cant.createdAt || new Date().toISOString()
+              });
+            });
+
+            alert('Dados importados com sucesso!');
+            window.navigateTo('home');
+          } else {
+            alert('Arquivo JSON com estrutura inválida.');
+          }
+        } catch(err) {
+          alert('Erro ao processar o arquivo JSON.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function updateSetting(key, val) {
+      state.settings[key] = val;
+      applySettings();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      applySettings();
+
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const page = item.dataset.page;
+          window.navigateTo(page);
+        });
+      });
+
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      const menuToggle = document.getElementById('menuToggle');
+      const menuIcon = menuToggle.querySelector('i');
+
+      // Começa sempre fechado em telas pequenas, evitando o menu preso aberto.
+      closeMobileMenu();
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-controls', 'sidebar');
+
+      menuToggle.addEventListener('click', () => {
+        const isOpen = sidebar.classList.contains('open');
+        if (isOpen) {
+          closeMobileMenu();
+        } else {
+          sidebar.classList.add('open');
+          overlay.classList.add('active');
+          document.body.classList.add('mobile-menu-open');
+          menuToggle.setAttribute('aria-expanded', 'true');
+          menuToggle.setAttribute('aria-label', 'Fechar menu');
+          menuIcon.classList.remove('fa-bars');
+          menuIcon.classList.add('fa-xmark');
+        }
+      });
+
+      overlay.addEventListener('click', closeMobileMenu);
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeMobileMenu();
+      });
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 820) closeMobileMenu();
+      });
+
+      document.getElementById('globalSearch').addEventListener('input', (e) => {
+        state.searchTerm = e.target.value;
+        render();
+      });
+    });
+  </script>
+</body>
+</html>
