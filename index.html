@@ -1888,6 +1888,23 @@ html,body,.app-container,.main-wrapper,.main-content { background-color:var(--bg
 .color-swatch { background:var(--swatch-color)!important; }
 input::placeholder,textarea::placeholder { color:var(--text-muted)!important; opacity:.85; }
 
+
+    /* Editor de conteúdo: cores ligadas ao tema ativo para não ficar branco no modo escuro */
+    .knowledge-editor-toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:var(--bg-dark);border:1px solid var(--border-color);border-bottom:0;border-radius:10px 10px 0 0}
+    .knowledge-editor-toolbar button{min-width:42px;padding:8px 12px;border:1px solid var(--border-color);border-radius:8px;background:var(--bg-card);color:var(--text-white);cursor:pointer;font-size:15px;transition:background .2s,border-color .2s,transform .2s}
+    .knowledge-editor-toolbar button:hover{background:var(--bg-dark);border-color:var(--gold-primary);color:var(--gold-primary)}
+    .knowledge-editor-toolbar button:active{transform:scale(.97)}
+    #knowledgeEntryContent{min-height:260px;padding:14px;border:1px solid var(--border-color);border-radius:0 0 10px 10px;background:var(--bg-card);color:var(--text-white);caret-color:var(--gold-primary);line-height:1.75;overflow-wrap:anywhere;white-space:normal;transition:border-color .2s,box-shadow .2s}
+    #knowledgeEntryContent:empty::before{content:attr(data-placeholder);color:var(--text-muted);opacity:.85;pointer-events:none}
+    #knowledgeEntryContent:focus{outline:none;border-color:var(--gold-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold-primary) 18%,transparent)}
+    #knowledgeEntryContent strong,#knowledgeEntryContent b{font-weight:800;color:inherit}
+    #knowledgeEntryContent em,#knowledgeEntryContent i{font-style:italic;color:inherit}
+    #knowledgeEntryContent u{text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px;color:inherit}
+    #knowledgeEntryContent ul,#knowledgeEntryContent ol{padding-left:28px}
+    #knowledgeEntryContent li{margin:4px 0}
+    [data-theme="dark"] #knowledgeEntryContent,[data-theme="dark"] #knowledgeEntryContent *{color:inherit}
+    [data-theme="dark"] #knowledgeEntryContent{color:var(--text-white)}
+    @media(max-width:600px){.knowledge-editor-toolbar{gap:6px;padding:8px}.knowledge-editor-toolbar button{padding:9px 11px}#knowledgeEntryContent{min-height:220px;padding:12px}}
 </style>
 
 </head>
@@ -1915,6 +1932,9 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
         </li>
         <li class="nav-item" data-page="recents">
           <button><i class="fa-solid fa-clock"></i> Recentes</button>
+        </li>
+        <li class="nav-item" data-page="knowledge">
+          <button><i class="fa-solid fa-book-open"></i> Biblioteca Tucuvori</button>
         </li>
 
         <div class="nav-section-title">Ações Rápidas</div>
@@ -1951,7 +1971,7 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
         </div>
         <div class="search-bar">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="globalSearch" placeholder="Buscar ponto, letra, entidade ou palavra-chave...">
+          <input type="text" id="globalSearch" placeholder="Buscar pontos, letras ou conhecimentos...">
         </div>
       </header>
 
@@ -1973,6 +1993,10 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
     <button onclick="window.navigateTo('add-category')">
       <i class="fa-solid fa-folder-plus"></i>
       <span>Nova Categoria</span>
+    </button>
+    <button onclick="window.navigateTo('knowledge')">
+      <i class="fa-solid fa-book-open"></i>
+      <span>Biblioteca</span>
     </button>
   </nav>
 
@@ -2006,10 +2030,15 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
     let state = {
       categories: [],
       cantigas: [],
+      knowledgeCategories: [],
+      knowledgeEntries: [],
       settings: (() => { try { const saved = JSON.parse(localStorage.getItem('umbanda_settings') || 'null'); return saved && typeof saved === 'object' ? { theme: saved.theme === 'dark' ? 'dark' : 'light', fontSize: saved.fontSize || '16px', mainColor: /^#[0-9a-f]{6}$/i.test(saved.mainColor || '') ? saved.mainColor : '#7d2435' } : { theme: 'light', fontSize: '16px', mainColor: '#7d2435' }; } catch (_) { return { theme: 'light', fontSize: '16px', mainColor: '#7d2435' }; } })(),
       currentPage: 'home',
       currentCategoryFilter: null,
       currentCantigaId: null,
+      currentKnowledgeEntryId: null,
+      editingKnowledgeCategoryId: null,
+      editingKnowledgeEntryId: null,
       editingCantigaId: null,
       editingCategoryId: null,
       searchTerm: '',
@@ -2045,6 +2074,20 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
       } else {
         state.cantigas = [];
       }
+      render();
+    });
+
+    // Biblioteca Tucuvori: coleções separadas dos pontos/cantigas.
+    const knowledgeCategoriesRef = ref(db, 'knowledgeCategories');
+    const knowledgeEntriesRef = ref(db, 'knowledgeEntries');
+    onValue(knowledgeCategoriesRef, (snapshot) => {
+      const data = snapshot.val();
+      state.knowledgeCategories = data ? Object.keys(data).map(id => ({ id, ...data[id] })) : [];
+      render();
+    });
+    onValue(knowledgeEntriesRef, (snapshot) => {
+      const data = snapshot.val();
+      state.knowledgeEntries = data ? Object.keys(data).map(id => ({ id, ...data[id] })) : [];
       render();
     });
 
@@ -2181,6 +2224,11 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
         case 'add-category': renderAddCategory(); break;
         case 'backup': renderBackup(); break;
         case 'settings': renderSettings(); break;
+        case 'knowledge': renderKnowledgeLibrary(); break;
+        case 'knowledge-category': renderKnowledgeCategory(state.currentCategoryFilter); break;
+        case 'knowledge-view': renderKnowledgeEntry(state.currentKnowledgeEntryId); break;
+        case 'knowledge-add-category': renderKnowledgeCategoryForm(); break;
+        case 'knowledge-add-entry': renderKnowledgeEntryForm(); break;
         case 'view-cantiga': renderCantigaView(state.currentCantigaId); break;
         default: renderHome();
       }
@@ -2677,7 +2725,16 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
       if (activeRecorder && activeRecorder.state !== 'inactive') { alert('Finalize a gravação atual antes de iniciar outra.'); return; }
       try {
         recordingCantigaId = cantigaId;
-        activeRecordingStream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}});
+        // Para pontos cantados, desativamos os filtros de voz que podem cortar
+        // o início/fim das notas e oscilar o volume durante o canto e o atabaque.
+        activeRecordingStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+            channelCount: 1
+          }
+        });
         activeAudioChunks = [];
         const preferred = ['audio/webm;codecs=opus','audio/webm','audio/mp4'];
         const mimeType = preferred.find(type => MediaRecorder.isTypeSupported(type));
@@ -2873,23 +2930,280 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
     };
 
     function renderSearchResults() {
-      const term = state.searchTerm.toLowerCase();
-      const results = state.cantigas.filter(c => 
-        c.title.toLowerCase().includes(term) || 
-        c.lyrics.toLowerCase().includes(term) ||
-        (c.tags && c.tags.some(t => t.toLowerCase().includes(term)))
+      const term = state.searchTerm.toLowerCase().trim();
+      const results = state.cantigas.filter(c =>
+        String(c.title||'').toLowerCase().includes(term) ||
+        String(c.lyrics||'').toLowerCase().includes(term) ||
+        (c.tags && c.tags.some(t => String(t).toLowerCase().includes(term)))
       );
-
+      const knowledgeResults = state.knowledgeEntries.filter(e =>
+        String(e.title||'').toLowerCase().includes(term) ||
+        String(e.content||'').toLowerCase().includes(term) ||
+        String(e.source||'').toLowerCase().includes(term) ||
+        String(state.knowledgeCategories.find(c=>String(c.id)===String(e.categoryId))?.name||'').toLowerCase().includes(term)
+      );
       mainContent.innerHTML = `
-        <div class="page-title">
-          <h2>Resultados da Busca ("${state.searchTerm}")</h2>
-        </div>
-        ${results.length === 0 ? '<p style="color: var(--text-muted);">Nenhum ponto encontrado para este termo.</p>' : ''}
-        <div class="grid-cards">
-          ${results.map(c => renderCantigaCardHtml(c)).join('')}
-        </div>
+        <div class="page-title"><h2>Resultados da busca: "${escapeHtml(state.searchTerm)}"</h2></div>
+        <h3 style="margin-bottom:14px">Pontos cantados (${results.length})</h3>
+        ${results.length === 0 ? '<p style="color:var(--text-muted);margin-bottom:22px">Nenhum ponto encontrado.</p>' : ''}
+        <div class="grid-cards">${results.map(c => renderCantigaCardHtml(c)).join('')}</div>
+        <h3 style="margin:28px 0 14px">Biblioteca Tucuvori (${knowledgeResults.length})</h3>
+        ${knowledgeResults.length === 0 ? '<p style="color:var(--text-muted)">Nenhum conteúdo encontrado na biblioteca.</p>' : ''}
+        <div class="grid-cards">${knowledgeResults.map(knowledgeEntryCard).join('')}</div>
       `;
     }
+
+
+    // ===== Biblioteca Tucuvori =====
+    function getKnowledgeDescendantCategoryIds(categoryId) {
+      const found = new Set([String(categoryId)]);
+      let changed = true;
+      while (changed) {
+        changed = false;
+        state.knowledgeCategories.forEach(c => {
+          if (c.parentId && found.has(String(c.parentId)) && !found.has(String(c.id))) {
+            found.add(String(c.id)); changed = true;
+          }
+        });
+      }
+      return found;
+    }
+
+    function knowledgeCategoryPath(categoryId) {
+      const cat = state.knowledgeCategories.find(c => String(c.id) === String(categoryId));
+      if (!cat) return 'Sem categoria';
+      if (!cat.parentId) return cat.name;
+      const parent = state.knowledgeCategories.find(c => String(c.id) === String(cat.parentId));
+      return parent ? `${knowledgeCategoryPath(parent.id)} / ${cat.name}` : cat.name;
+    }
+
+    function renderKnowledgeLibrary() {
+      const cats = [...state.knowledgeCategories].sort((a,b) => String(a.name||'').localeCompare(String(b.name||''), 'pt-BR'));
+      const roots = cats.filter(c => !c.parentId || !cats.some(parent => String(parent.id) === String(c.parentId)));
+      const entries = state.knowledgeEntries;
+      const renderCategoryCard = c => {
+        const descendants = getKnowledgeDescendantCategoryIds(c.id);
+        const count = entries.filter(e => descendants.has(String(e.categoryId))).length;
+        const children = cats.filter(child => String(child.parentId) === String(c.id));
+        return `<div class="card" onclick="window.navigateTo('knowledge-category','${c.id}')">
+          <div><div class="card-header"><div class="card-icon"><i class="fa-solid fa-folder-open"></i></div><span class="tag">${count} ${count===1?'conteúdo':'conteúdos'}</span></div>
+          <h3 class="card-title">${escapeHtml(c.name)}</h3><p class="card-subtitle">${escapeHtml(c.description||'Materiais desta categoria')}</p>
+          ${children.length ? `<p class="card-subtitle" style="margin-top:10px"><i class="fa-solid fa-folder-tree"></i> ${children.length} ${children.length===1?'subcategoria':'subcategorias'}</p>` : ''}</div>
+          <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap"><button class="btn btn-secondary" onclick="event.stopPropagation();window.editKnowledgeCategory('${c.id}')">Editar</button><button class="btn btn-danger" onclick="event.stopPropagation();window.deleteKnowledgeCategory('${c.id}')">Excluir</button></div>
+        </div>`;
+      };
+      mainContent.innerHTML = `
+        <div class="page-title"><h2>Biblioteca Tucuvori</h2>
+          <div style="display:flex;gap:9px;flex-wrap:wrap">
+            <button class="btn btn-secondary" onclick="window.exportKnowledgePDF()"><i class="fa-solid fa-file-pdf"></i> Exportar biblioteca em PDF</button>
+            <button class="btn btn-secondary" onclick="window.navigateTo('knowledge-add-category')"><i class="fa-solid fa-folder-plus"></i> Nova categoria</button>
+            <button class="btn btn-primary" onclick="window.navigateTo('knowledge-add-entry')"><i class="fa-solid fa-file-circle-plus"></i> Novo conteúdo</button>
+          </div>
+        </div>
+        <div class="app-info-card"><h3><i class="fa-solid fa-book-open"></i> Conhecimento e consulta</h3><p>Organize materiais sobre saudações, ervas, banhos, Orixás, linhas de entidades e qualquer outro assunto. Crie categorias e subcategorias para manter os conteúdos organizados.</p></div>
+        ${roots.length ? `<div class="grid-cards">${roots.map(renderCategoryCard).join('')}</div>` : `<div class="cantiga-view"><p>Ainda não há categorias na biblioteca. Crie a primeira categoria para começar.</p></div>`}
+        <h3 style="margin:28px 0 14px;font-family:var(--font-title)">Conteúdos recentes</h3>
+        ${entries.length ? `<div class="grid-cards">${[...entries].sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||''))).slice(0,8).map(e=>knowledgeEntryCard(e)).join('')}</div>` : `<p style="color:var(--text-muted)">Nenhum conteúdo publicado ainda.</p>`}
+      `;
+    }
+
+    function knowledgeEntryCard(entry) {
+      const cat = state.knowledgeCategories.find(c => String(c.id) === String(entry.categoryId));
+      return `<div class="card" onclick="window.openKnowledgeEntry('${entry.id}')">
+        <div><div class="card-header"><div class="card-icon"><i class="fa-solid fa-file-lines"></i></div><span class="tag">${escapeHtml(cat ? knowledgeCategoryPath(cat.id) : 'Sem categoria')}</span></div>
+        <h3 class="card-title">${escapeHtml(entry.title||'Sem título')}</h3>
+        <p class="card-subtitle">${escapeHtml(String(entry.content||'').slice(0,150))}${String(entry.content||'').length>150?'…':''}</p></div>
+        <div style="margin-top:16px"><button class="btn btn-secondary" onclick="event.stopPropagation();window.openKnowledgeEntry('${entry.id}')">Ler conteúdo</button></div>
+      </div>`;
+    }
+
+    function renderKnowledgeCategory(categoryId) {
+      const cat = state.knowledgeCategories.find(c => String(c.id) === String(categoryId));
+      if (!cat) return window.navigateTo('knowledge');
+      const descendants = getKnowledgeDescendantCategoryIds(cat.id);
+      const entries = state.knowledgeEntries.filter(e => String(e.categoryId) === String(categoryId)).sort((a,b)=>String(a.title||'').localeCompare(String(b.title||''),'pt-BR'));
+      const children = state.knowledgeCategories.filter(c => String(c.parentId) === String(categoryId)).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt-BR'));
+      mainContent.innerHTML = `<div class="page-title"><div><button class="btn btn-secondary" onclick="window.navigateTo('knowledge')"><i class="fa-solid fa-arrow-left"></i> Biblioteca Tucuvori</button><h2 style="margin-top:12px">${escapeHtml(cat.name)}</h2><p class="card-subtitle">${escapeHtml(cat.description||'')}</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-secondary" onclick="window.exportKnowledgePDF('${cat.id}')"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button><button class="btn btn-secondary" onclick="window.navigateTo('knowledge-add-category','${cat.id}')"><i class="fa-solid fa-folder-plus"></i> Subcategoria</button><button class="btn btn-secondary" onclick="window.editKnowledgeCategory('${cat.id}')">Editar categoria</button><button class="btn btn-primary" onclick="window.navigateTo('knowledge-add-entry','${cat.id}')"><i class="fa-solid fa-plus"></i> Novo conteúdo</button></div></div>
+        ${children.length ? `<h3 style="margin:18px 0 12px;font-family:var(--font-title)">Subcategorias</h3><div class="grid-cards">${children.map(c=>`<div class="card" onclick="window.navigateTo('knowledge-category','${c.id}')"><div class="card-header"><div class="card-icon"><i class="fa-solid fa-folder-open"></i></div><span class="tag">${state.knowledgeEntries.filter(e=>getKnowledgeDescendantCategoryIds(c.id).has(String(e.categoryId))).length} conteúdos</span></div><h3 class="card-title">${escapeHtml(c.name)}</h3><p class="card-subtitle">${escapeHtml(c.description||'Subcategoria')}</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn btn-secondary" onclick="event.stopPropagation();window.editKnowledgeCategory('${c.id}')">Editar</button></div></div>`).join('')}</div>` : ''}
+        <h3 style="margin:22px 0 12px;font-family:var(--font-title)">Conteúdos desta categoria</h3>
+        ${entries.length ? `<div class="grid-cards">${entries.map(knowledgeEntryCard).join('')}</div>` : `<div class="cantiga-view"><p>Nenhum conteúdo diretamente nesta categoria ainda.</p><button class="btn btn-primary" onclick="window.navigateTo('knowledge-add-entry','${cat.id}')">Adicionar conteúdo</button></div>`}`;
+    }
+
+    function renderKnowledgeCategoryForm() {
+      const old = state.editingKnowledgeCategoryId ? state.knowledgeCategories.find(c=>c.id===state.editingKnowledgeCategoryId) : null;
+      const requestedParent = old ? old.parentId || '' : state.currentPage === 'knowledge-add-category' ? (state.currentCategoryFilter || '') : '';
+      const parentOptions = state.knowledgeCategories.filter(c => {
+        if (old && String(c.id) === String(old.id)) return false;
+        if (old && getKnowledgeDescendantCategoryIds(old.id).has(String(c.id))) return false;
+        return true;
+      }).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt-BR'));
+      mainContent.innerHTML = `<div class="page-title"><h2>${old?'Editar categoria':'Nova categoria / subcategoria'}</h2></div>
+        <div class="form-container"><form id="knowledgeCategoryForm">
+          <div class="form-group"><label for="knowledgeCatName">Nome da categoria</label><input class="form-control" id="knowledgeCatName" required maxlength="120" placeholder="Ex.: Ervas, Saudações, Orixás" value="${escapeHtml(old?.name||'')}"></div>
+          <div class="form-group"><label for="knowledgeCatParent">Categoria principal (opcional)</label><select class="form-control" id="knowledgeCatParent"><option value="">Nenhuma — categoria principal</option>${parentOptions.map(c=>`<option value="${c.id}" ${String(requestedParent)===String(c.id)?'selected':''}>${escapeHtml(knowledgeCategoryPath(c.id))}</option>`).join('')}</select><small class="card-subtitle">Escolha uma categoria para criar uma subcategoria dentro dela.</small></div>
+          <div class="form-group"><label for="knowledgeCatDescription">Descrição (opcional)</label><textarea class="form-control" id="knowledgeCatDescription" style="min-height:100px" placeholder="Explique brevemente o que será organizado aqui">${escapeHtml(old?.description||'')}</textarea></div>
+          <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="window.navigateTo('knowledge')">Cancelar</button><button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Salvar categoria</button></div>
+        </form></div>`;
+      document.getElementById('knowledgeCategoryForm').onsubmit = async e => {
+        e.preventDefault();
+        const parentId=document.getElementById('knowledgeCatParent').value || null;
+        if (old && parentId && getKnowledgeDescendantCategoryIds(old.id).has(String(parentId))) { alert('Uma categoria não pode ficar dentro dela mesma ou de uma subcategoria sua.'); return; }
+        const data={name:document.getElementById('knowledgeCatName').value.trim(),description:document.getElementById('knowledgeCatDescription').value.trim(),parentId,updatedAt:new Date().toISOString()};
+        if(!data.name) return;
+        try {
+          if(old) await update(ref(db,`knowledgeCategories/${old.id}`),data);
+          else { data.createdAt=new Date().toISOString(); await set(push(knowledgeCategoriesRef),data); }
+          state.editingKnowledgeCategoryId=null; window.navigateTo('knowledge');
+        } catch(err) { alert('Não foi possível salvar a categoria. Verifique a conexão e as permissões do Firebase.'); }
+      };
+    }
+
+    function sanitizeKnowledgeHtml(input) {
+      const template = document.createElement('template');
+      template.innerHTML = String(input || '');
+      const allowed = new Set(['B','STRONG','I','EM','U','P','BR','UL','OL','LI','DIV']);
+      const cleanNode = node => {
+        [...node.childNodes].forEach(child => {
+          if (child.nodeType === Node.ELEMENT_NODE) {
+            if (!allowed.has(child.tagName)) {
+              if (['SCRIPT','STYLE','IFRAME','OBJECT','SVG','MATH'].includes(child.tagName)) child.remove();
+              else { child.replaceWith(...child.childNodes); }
+            } else {
+              [...child.attributes].forEach(attr => child.removeAttribute(attr.name));
+              cleanNode(child);
+            }
+          } else if (child.nodeType !== Node.TEXT_NODE) child.remove();
+        });
+      };
+      cleanNode(template.content);
+      return template.innerHTML;
+    }
+
+    function knowledgeContentForEditor(content) {
+      const value = String(content || '');
+      // Aceita conteúdos antigos que já foram salvos com tags HTML literais,
+      // além do texto simples e do conteúdo formatado pelo editor.
+      if (/<(?:b|strong|i|em|u|p|br|ul|ol|li|div)(?:\s|\/?>)/i.test(value)) {
+        return sanitizeKnowledgeHtml(value);
+      }
+      return escapeHtml(value).replace(/\r?\n/g, '<br>');
+    }
+
+    function renderKnowledgeEntryForm() {
+      const old = state.editingKnowledgeEntryId ? state.knowledgeEntries.find(e=>e.id===state.editingKnowledgeEntryId) : null;
+      const defaultCategory = old?.categoryId || state.currentCategoryFilter || '';
+      const categories=[...state.knowledgeCategories].sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt-BR'));
+      mainContent.innerHTML = `<div class="page-title"><h2>${old?'Editar conteúdo':'Publicar novo conteúdo'}</h2></div>
+        <div class="form-container"><form id="knowledgeEntryForm">
+          <div class="form-group"><label for="knowledgeEntryTitle">Título</label><input class="form-control" id="knowledgeEntryTitle" required maxlength="180" placeholder="Título do material" value="${escapeHtml(old?.title||'')}"></div>
+          <div class="form-group"><label for="knowledgeEntryCategory">Categoria</label><select class="form-control" id="knowledgeEntryCategory" required>${categories.map(c=>`<option value="${c.id}" ${String(defaultCategory)===String(c.id)?'selected':''}>${escapeHtml(c.name)}</option>`).join('')}</select>${!categories.length?'<p class="card-subtitle">Crie uma categoria antes de publicar conteúdo.</p>':''}</div>
+          <div class="form-group"><label for="knowledgeEntryContent">Conteúdo</label>
+            <div class="knowledge-editor-toolbar" role="toolbar" aria-label="Formatação do texto">
+              <button type="button" title="Negrito (Ctrl+B)" aria-label="Negrito" onclick="window.formatKnowledgeText('bold')"><strong>N</strong></button>
+              <button type="button" title="Itálico (Ctrl+I)" aria-label="Itálico" onclick="window.formatKnowledgeText('italic')"><em>I</em></button>
+              <button type="button" title="Sublinhado (Ctrl+U)" aria-label="Sublinhado" onclick="window.formatKnowledgeText('underline')"><u>S</u></button>
+              <button type="button" title="Lista com marcadores" aria-label="Lista com marcadores" onclick="window.formatKnowledgeText('insertUnorderedList')">• Lista</button>
+              <button type="button" title="Limpar formatação" aria-label="Limpar formatação" onclick="window.formatKnowledgeText('removeFormat')">Limpar</button>
+            </div>
+            <div class="form-control" id="knowledgeEntryContent" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Escreva ou cole aqui o material completo...">${knowledgeContentForEditor(old?.content||'')}</div>
+            <small class="card-subtitle">Selecione o texto e use N, I ou S para formatar. Atalhos: Ctrl+B, Ctrl+I e Ctrl+U.</small>
+          </div>
+          <div class="form-group"><label for="knowledgeEntrySource">Fonte / observações (opcional)</label><input class="form-control" id="knowledgeEntrySource" placeholder="Fonte, autor ou observações" value="${escapeHtml(old?.source||'')}"></div>
+          <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="window.navigateTo('knowledge')">Cancelar</button><button class="btn btn-primary" type="submit" ${!categories.length?'disabled':''}><i class="fa-solid fa-floppy-disk"></i> Salvar conteúdo</button></div>
+        </form></div>`;
+      let knowledgeSavedRange = null;
+      const knowledgeEditor = document.getElementById('knowledgeEntryContent');
+      if (knowledgeEditor) {
+        knowledgeEditor.addEventListener('keyup', saveKnowledgeSelection);
+        knowledgeEditor.addEventListener('mouseup', saveKnowledgeSelection);
+        knowledgeEditor.addEventListener('input', saveKnowledgeSelection);
+        knowledgeEditor.addEventListener('blur', saveKnowledgeSelection);
+        function saveKnowledgeSelection() {
+          const selection = window.getSelection();
+          if (!selection || !selection.rangeCount) return;
+          const range = selection.getRangeAt(0);
+          if (knowledgeEditor.contains(range.commonAncestorContainer)) knowledgeSavedRange = range.cloneRange();
+        }
+        document.querySelectorAll('.knowledge-editor-toolbar button').forEach(button => {
+          button.addEventListener('mousedown', event => event.preventDefault());
+          button.addEventListener('touchstart', () => saveKnowledgeSelection(), {passive:true});
+        });
+      }
+      window.formatKnowledgeText = command => {
+        const editor=document.getElementById('knowledgeEntryContent');
+        if(!editor) return;
+        editor.focus();
+        const selection=window.getSelection();
+        if(knowledgeSavedRange && editor.contains(knowledgeSavedRange.commonAncestorContainer) && selection) {
+          selection.removeAllRanges();
+          selection.addRange(knowledgeSavedRange);
+        }
+        document.execCommand(command,false,null);
+        const currentSelection=window.getSelection();
+        if(currentSelection && currentSelection.rangeCount) knowledgeSavedRange=currentSelection.getRangeAt(0).cloneRange();
+      };
+      document.getElementById('knowledgeEntryForm').onsubmit = async e => {
+        e.preventDefault();
+        const editor=document.getElementById('knowledgeEntryContent');
+        const content=sanitizeKnowledgeHtml(editor.innerHTML).trim();
+        const data={title:document.getElementById('knowledgeEntryTitle').value.trim(),categoryId:document.getElementById('knowledgeEntryCategory').value,content,source:document.getElementById('knowledgeEntrySource').value.trim(),updatedAt:new Date().toISOString()};
+        if(!data.title||!data.categoryId||!editor.innerText.trim()) { alert('Preencha o título, a categoria e o conteúdo.'); return; }
+        try {
+          if(old) await update(ref(db,`knowledgeEntries/${old.id}`),data);
+          else { data.createdAt=new Date().toISOString(); await set(push(knowledgeEntriesRef),data); }
+          state.editingKnowledgeEntryId=null; state.currentKnowledgeEntryId=null; window.navigateTo('knowledge');
+        } catch(err) { alert('Não foi possível salvar o conteúdo. Verifique a conexão e as permissões do Firebase.'); }
+      };
+    }
+
+    function renderKnowledgeEntry(entryId) {
+      const entry=state.knowledgeEntries.find(e=>String(e.id)===String(entryId));
+      if(!entry) return window.navigateTo('knowledge');
+      const cat=state.knowledgeCategories.find(c=>String(c.id)===String(entry.categoryId));
+      mainContent.innerHTML=`<div class="page-title"><div><button class="btn btn-secondary" onclick="window.navigateTo('knowledge-category','${entry.categoryId}')"><i class="fa-solid fa-arrow-left"></i> ${escapeHtml(cat?.name||'Biblioteca')}</button><h2 style="margin-top:14px">${escapeHtml(entry.title||'Sem título')}</h2></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-secondary" onclick="window.exportKnowledgePDF(null,'${entry.id}')"><i class="fa-solid fa-file-pdf"></i> PDF</button><button class="btn btn-secondary" onclick="window.editKnowledgeEntry('${entry.id}')"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn btn-danger" onclick="window.deleteKnowledgeEntry('${entry.id}')"><i class="fa-solid fa-trash"></i> Excluir</button></div></div>
+        <article class="cantiga-view"><div class="cantiga-lyric knowledge-rendered-content">${sanitizeKnowledgeHtml(knowledgeContentForEditor(entry.content||''))}</div>${entry.source?`<div class="cantiga-notes-card"><strong>Fonte / observações:</strong> ${escapeHtml(entry.source)}</div>`:''}<p class="card-subtitle">Categoria: ${escapeHtml(cat ? knowledgeCategoryPath(cat.id) : 'Sem categoria')} ${entry.updatedAt?`· Atualizado em ${new Date(entry.updatedAt).toLocaleDateString('pt-BR')}`:''}</p></article>`;
+    }
+
+    window.openKnowledgeEntry = id => { state.currentKnowledgeEntryId=id; window.navigateTo('knowledge-view',null); };
+    window.editKnowledgeCategory = id => { state.editingKnowledgeCategoryId=id; window.navigateTo('knowledge-add-category',null); };
+    window.editKnowledgeEntry = id => { state.editingKnowledgeEntryId=id; window.navigateTo('knowledge-add-entry',null); };
+    window.deleteKnowledgeCategory = async id => {
+      const ids=getKnowledgeDescendantCategoryIds(id);
+      const affectedEntries=state.knowledgeEntries.filter(e=>ids.has(String(e.categoryId)));
+      const message=`Esta categoria possui ${ids.size-1} subcategoria(s) e ${affectedEntries.length} conteúdo(s) nela ou nas subcategorias. Tudo isso será excluído. Deseja continuar?`;
+      if(!confirm(message)) return;
+      try {
+        await Promise.all(affectedEntries.map(e=>remove(ref(db,`knowledgeEntries/${e.id}`))));
+        await Promise.all([...ids].map(categoryId=>remove(ref(db,`knowledgeCategories/${categoryId}`))));
+        window.navigateTo('knowledge');
+      } catch(err) { alert('Não foi possível excluir a categoria. Verifique as permissões do Firebase.'); }
+    };
+    window.deleteKnowledgeEntry = async id => {
+      if(!confirm('Excluir este conteúdo permanentemente?')) return;
+      try { await remove(ref(db,`knowledgeEntries/${id}`)); window.navigateTo('knowledge'); }
+      catch(err) { alert('Não foi possível excluir o conteúdo. Verifique as permissões do Firebase.'); }
+    };
+
+    window.exportKnowledgePDF = function(categoryId = null, entryId = null) {
+      const printArea = document.getElementById('print-section');
+      let entries = state.knowledgeEntries;
+      let title = 'Biblioteca Tucuvori — TUCUVORI';
+      if (entryId) {
+        entries = entries.filter(e => String(e.id) === String(entryId));
+        title = entries[0]?.title || 'Conhecimento';
+      } else if (categoryId) {
+        const ids = getKnowledgeDescendantCategoryIds(categoryId);
+        entries = entries.filter(e => ids.has(String(e.categoryId)));
+        title = knowledgeCategoryPath(categoryId);
+      }
+      entries = [...entries].sort((a,b) => knowledgeCategoryPath(a.categoryId).localeCompare(knowledgeCategoryPath(b.categoryId),'pt-BR') || String(a.title||'').localeCompare(String(b.title||''),'pt-BR'));
+      if (!entries.length) { alert('Não há conteúdos para exportar em PDF.'); return; }
+      const safeContent = content => sanitizeKnowledgeHtml(knowledgeContentForEditor(content || ''));
+      printArea.innerHTML = `<div style="font-family:Arial,sans-serif;color:#222;background:#fff"><header style="border-bottom:3px solid #7d2435;padding-bottom:14px;margin-bottom:22px"><h1 style="font-size:24px;margin:0 0 6px;color:#7d2435">${escapeHtml(title)}</h1><p style="font-size:11px;color:#666;margin:0">TUCUVORI · Biblioteca Tucuvori · Exportado em ${new Date().toLocaleDateString('pt-BR')}</p></header>${entries.map(entry => `<article class="pdf-knowledge-item" style="margin:0 0 24px;padding:0 0 18px;border-bottom:1px solid #ddd;break-inside:avoid"><h2 style="font-size:18px;color:#7d2435;margin:0 0 6px">${escapeHtml(entry.title||'Sem título')}</h2><p style="font-size:11px;color:#666;margin:0 0 12px"><strong>Categoria:</strong> ${escapeHtml(knowledgeCategoryPath(entry.categoryId))}</p><div style="font-size:12px;line-height:1.7;overflow-wrap:anywhere">${safeContent(entry.content)}</div>${entry.source?`<p style="font-size:11px;color:#555;margin-top:12px"><strong>Fonte / observações:</strong> ${escapeHtml(entry.source)}</p>`:''}</article>`).join('')}</div>`;
+      setTimeout(() => window.print(), 120);
+    };
 
     function renderBackup() {
       mainContent.innerHTML = `
@@ -2953,6 +3267,12 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
             <label>Cor Principal de Destaque</label>
             ${renderColorChooser('colorPicker', state.settings.mainColor || '#8f1d2c')}
           </div>
+          <hr style="border-color:var(--border-color); margin:24px 0;">
+          <section class="settings-card" style="padding:20px; border:1px solid #dc2626; background:rgba(220,38,38,.045);">
+            <h3 style="color:#dc2626; margin:0 0 8px;"><i class="fa-solid fa-triangle-exclamation"></i> Zona de perigo</h3>
+            <p style="color:var(--text-muted); margin:0 0 14px;">Apaga do Firebase os pontos cantados, categorias, gravações de áudio e os conteúdos e categorias da Biblioteca Tucuvori. Um backup JSON será baixado antes da exclusão.</p>
+            <button class="btn btn-danger" style="background:#b91c1c;color:#fff;border:0;" onclick="window.resetTucuvoriFirebaseData()"><i class="fa-solid fa-trash-can"></i> Zerar dados do Firebase</button>
+          </section>
         </div>
       `;
 
@@ -3141,7 +3461,7 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
     };
 
     window.exportData = function() {
-      const exportObject = { categories: state.categories, cantigas: state.cantigas };
+      const exportObject = { categories: state.categories, cantigas: state.cantigas, knowledgeCategories: state.knowledgeCategories, knowledgeEntries: state.knowledgeEntries };
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObject, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
@@ -3149,6 +3469,42 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
+    };
+
+    // Ação destrutiva protegida por senha e duas confirmações.
+    // Limpa somente os nós utilizados por este aplicativo, não o projeto Firebase inteiro.
+    window.resetTucuvoriFirebaseData = async function() {
+      const enteredPassword = window.prompt('Digite a senha para zerar os dados do Firebase:');
+      if (enteredPassword === null) return;
+      if (enteredPassword !== '1802') {
+        alert('Senha incorreta. Nenhum dado foi apagado.');
+        return;
+      }
+
+      const finalConfirmation = window.confirm(
+        'ATENÇÃO: esta ação apagará permanentemente os pontos cantados, categorias, gravações de áudio e todos os conteúdos da Biblioteca Tucuvori no Firebase.\n\nAntes, será baixado um backup JSON. Deseja continuar?'
+      );
+      if (!finalConfirmation) return;
+
+      try {
+        // Gera um backup com os dados atualmente carregados antes de apagar.
+        window.exportData();
+        await Promise.all([
+          remove(ref(db, 'categories')),
+          remove(ref(db, 'cantigas')),
+          remove(ref(db, 'knowledgeCategories')),
+          remove(ref(db, 'knowledgeEntries'))
+        ]);
+        state.categories = [];
+        state.cantigas = [];
+        state.knowledgeCategories = [];
+        state.knowledgeEntries = [];
+        alert('Os dados do aplicativo foram apagados do Firebase. O backup JSON foi solicitado para download.');
+        render();
+      } catch (error) {
+        console.error('Falha ao zerar os dados do Firebase:', error);
+        alert('Não foi possível zerar todos os dados. Verifique a conexão e as regras do Firebase. Alguns nós podem ter sido apagados antes do erro.');
+      }
     };
 
     function importData(event) {
