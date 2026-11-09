@@ -1907,6 +1907,14 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
     @media(max-width:600px){.knowledge-editor-toolbar{gap:6px;padding:8px}.knowledge-editor-toolbar button{padding:9px 11px}#knowledgeEntryContent{min-height:220px;padding:12px}}
 </style>
 
+
+<style id="audio-library-navigation-styles">
+.audio-library-list{display:grid;gap:16px}.audio-library-point{min-width:0;padding:clamp(15px,2.5vw,22px);border:1px solid var(--border-color);border-radius:18px;background:var(--bg-card);box-shadow:var(--card-shadow)}
+.audio-library-point-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.audio-library-point-head h3{font-family:var(--font-title);font-size:1.05rem;overflow-wrap:anywhere}.audio-library-point-head span,.audio-library-track-body span{display:block;color:var(--text-muted);font-size:.76rem;margin-top:5px}
+.audio-library-track{display:flex;align-items:flex-start;gap:11px;padding:12px 0;border-top:1px solid var(--border-color);min-width:0}.audio-library-track-icon{width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;border-radius:11px;background:rgba(125,36,53,.09);color:var(--gold-primary)}.audio-library-track-body{flex:1;min-width:0;display:grid;gap:4px}.audio-library-track-body strong{overflow-wrap:anywhere}.audio-library-track-body audio{width:100%;max-width:100%;height:40px;margin-top:4px}
+@media(max-width:600px){.audio-library-point-head{align-items:flex-start;flex-direction:column}.audio-library-point-head .btn{width:100%}.audio-library-track{gap:8px}.audio-library-track .audio-delete-button{flex:0 0 32px}}
+</style>
+
 </head>
 <body>
 
@@ -1926,6 +1934,9 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
         </li>
         <li class="nav-item" data-page="categories">
           <button><i class="fa-solid fa-layer-group"></i> Categorias</button>
+        </li>
+        <li class="nav-item" data-page="audio-categories">
+          <button><i class="fa-solid fa-headphones"></i> Pontos Cantados</button>
         </li>
         <li class="nav-item" data-page="favorites">
           <button><i class="fa-solid fa-star"></i> Favoritos</button>
@@ -2218,6 +2229,8 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
         case 'home': renderHome(); break;
         case 'categories': renderCategories(); break;
         case 'category-detail': renderCategoryDetail(state.currentCategoryFilter); break;
+        case 'audio-categories': renderAudioCategories(); break;
+        case 'audio-category-detail': renderAudioCategoryDetail(state.currentCategoryFilter); break;
         case 'favorites': renderFavorites(); break;
         case 'recents': renderRecents(); break;
         case 'add-cantiga': renderAddCantiga(); break;
@@ -2406,6 +2419,75 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
             </div>
           </div>
         </div>
+      `;
+    }
+
+    // Biblioteca exclusiva dos pontos que já possuem gravações de áudio.
+    // A navegação reutiliza a mesma árvore de categorias/subcategorias dos pontos escritos.
+    function getAudioCategoryTreeIds(categoryId) {
+      return getCategoryTreeIds(categoryId);
+    }
+
+    function getAudioCantigas(categoryId = null) {
+      const allowed = categoryId ? getAudioCategoryTreeIds(categoryId) : null;
+      return state.cantigas.filter(c => {
+        const hasAudio = c.recordings && Object.keys(c.recordings).length > 0;
+        return hasAudio && (!allowed || allowed.has(String(c.categoryId)));
+      });
+    }
+
+    function countCategoryAudios(categoryId) {
+      const ids = getAudioCategoryTreeIds(categoryId);
+      return getAudioCantigas().filter(c => ids.has(String(c.categoryId)))
+        .reduce((total, c) => total + Object.keys(c.recordings || {}).length, 0);
+    }
+
+    function renderAudioCategories() {
+      const roots = state.categories.filter(c => !c.parentId)
+        .sort((a,b) => String(a.name).localeCompare(String(b.name),'pt-BR'));
+      const categoriesWithAudio = roots.filter(c => getAudioCantigas(c.id).length);
+      const totalTracks = getAudioCantigas().reduce((n,c) => n + Object.keys(c.recordings || {}).length, 0);
+      mainContent.innerHTML = `
+        <div class="page-title">
+          <div><h2>Pontos Cantados — Áudios</h2><p class="card-subtitle">Ouça as gravações organizadas pelas mesmas categorias e subcategorias dos pontos escritos.</p></div>
+          <span class="tag"><i class="fa-solid fa-headphones"></i> ${totalTracks} áudio(s)</span>
+        </div>
+        <div class="app-info-card"><h3>Acervo de áudio</h3><p>Escolha uma categoria para encontrar os pontos cantados. As subcategorias são exibidas dentro de cada categoria, mantendo a organização da Biblioteca de Pontos.</p></div>
+        ${categoriesWithAudio.length ? `<div class="grid-cards">${categoriesWithAudio.map(cat => {
+          const points = getAudioCantigas(cat.id).length;
+          const tracks = countCategoryAudios(cat.id);
+          const subs = state.categories.filter(c => c.parentId === cat.id && getAudioCantigas(c.id).length).length;
+          return `<div class="card" onclick="window.navigateTo('audio-category-detail','${cat.id}')">
+            <div><div class="card-header"><div class="card-icon" style="background:${cat.color || '#8f1d2c'}20;color:${cat.color || 'var(--gold-primary)'}"><i class="fa-solid ${escapeHtml(cat.icon || 'fa-folder-open')}"></i></div><span class="tag">${tracks} áudio(s)</span></div>
+            <h3 class="card-title">${escapeHtml(cat.name)}</h3><p class="card-subtitle">${points} ponto(s) com gravação${subs ? ` · ${subs} subcategoria(s) com áudio` : ''}</p></div>
+            <div style="display:flex;justify-content:flex-end;margin-top:16px;color:var(--gold-primary);font-weight:700;font-size:.82rem">Abrir categoria <i class="fa-solid fa-arrow-right" style="margin-left:8px"></i></div>
+          </div>`;
+        }).join('')}</div>` : `<div class="cantiga-view"><div class="no-recordings"><i class="fa-solid fa-headphones"></i><strong>Nenhum ponto cantado com áudio encontrado.</strong><span>Abra um ponto escrito, grave uma cantiga e salve. Ela aparecerá automaticamente nesta área.</span></div><button class="btn btn-primary" style="margin-top:16px" onclick="window.navigateTo('categories')">Ver pontos escritos</button></div>`}
+      `;
+    }
+
+    function renderAudioCategoryDetail(categoryId) {
+      const category = state.categories.find(c => String(c.id) === String(categoryId));
+      if (!category) return window.navigateTo('audio-categories');
+      const children = state.categories.filter(c => String(c.parentId) === String(categoryId))
+        .filter(c => getAudioCantigas(c.id).length)
+        .sort((a,b) => String(a.name).localeCompare(String(b.name),'pt-BR'));
+      const allIds = getAudioCategoryTreeIds(categoryId);
+      const points = getAudioCantigas().filter(c => allIds.has(String(c.categoryId)))
+        .sort((a,b) => String(a.title).localeCompare(String(b.title),'pt-BR'));
+      const tracks = points.reduce((n,c) => n + Object.keys(c.recordings || {}).length, 0);
+      mainContent.innerHTML = `
+        <div class="page-title">
+          <div><button class="btn btn-secondary" onclick="window.navigateTo('audio-categories')"><i class="fa-solid fa-arrow-left"></i> Todas as categorias de áudio</button>
+          <h2 style="margin-top:13px"><i class="fa-solid ${escapeHtml(category.icon || 'fa-folder-open')}" style="color:${category.color || 'var(--gold-primary)'};margin-right:8px"></i>${escapeHtml(category.name)}</h2>
+          <p class="card-subtitle">${points.length} ponto(s) · ${tracks} gravação(ões)</p></div>
+        </div>
+        ${children.length ? `<h3 style="margin:8px 0 14px;font-family:var(--font-title);color:var(--gold-primary)">Subcategorias</h3><div class="grid-cards" style="margin-bottom:28px">${children.map(c => `<div class="card" onclick="window.navigateTo('audio-category-detail','${c.id}')"><div class="card-header"><div class="card-icon" style="background:${c.color || '#8f1d2c'}20;color:${c.color || 'var(--gold-primary)'}"><i class="fa-solid ${escapeHtml(c.icon || 'fa-folder-open')}"></i></div><span class="tag">${countCategoryAudios(c.id)} áudio(s)</span></div><h3 class="card-title">${escapeHtml(c.name)}</h3><p class="card-subtitle">${getAudioCantigas(c.id).length} ponto(s) com gravação</p></div>`).join('')}</div>` : ''}
+        <h3 style="margin:8px 0 14px;font-family:var(--font-title);color:var(--gold-primary)">Pontos cantados</h3>
+        ${points.length ? `<div class="audio-library-list">${points.map(c => `<article class="audio-library-point">
+          <div class="audio-library-point-head"><div><h3>${escapeHtml(c.title || 'Ponto sem título')}</h3><span>${escapeHtml(getCantigaCategoryName(c.categoryId))} · ${Object.keys(c.recordings || {}).length} gravação(ões)</span></div><button class="btn btn-secondary" onclick="window.viewCantiga('${c.id}')"><i class="fa-solid fa-file-lines"></i> Ver ponto</button></div>
+          ${Object.entries(c.recordings || {}).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0)).map(([rid,rec]) => `<div class="audio-library-track"><div class="audio-library-track-icon"><i class="fa-solid fa-music"></i></div><div class="audio-library-track-body"><strong>${escapeHtml(rec.name || 'Gravação do ponto')}</strong><span>${rec.createdAt ? formatDate(rec.createdAt) : 'Data não informada'}${rec.duration ? ` · ${formatAudioDuration(rec.duration)}` : ''}</span><audio controls preload="none" src="${escapeHtml(rec.dataUrl || rec.url || '')}" aria-label="Ouvir ${escapeHtml(rec.name || c.title || 'áudio')}"></audio></div><button class="audio-delete-button" title="Excluir áudio" aria-label="Excluir áudio" onclick="window.deleteCantigaRecording('${c.id}','${rid}')"><i class="fa-solid fa-trash"></i></button></div>`).join('')}
+        </article>`).join('')}</div>` : `<div class="no-recordings"><i class="fa-solid fa-music"></i><span>Não há gravações nesta categoria ainda.</span></div>`}
       `;
     }
 
@@ -3530,6 +3612,7 @@ input::placeholder,textarea::placeholder { color:var(--text-muted)!important; op
                 lyrics: cant.lyrics,
                 notes: cant.notes || '',
                 favorite: !!cant.favorite,
+                recordings: cant.recordings || {},
                 createdAt: cant.createdAt || new Date().toISOString()
               });
             });
